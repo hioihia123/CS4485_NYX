@@ -1,0 +1,161 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.nyx-navbar {
+    height: 90px;
+    background: gray;
+    margin: 0;
+}
+
+.nyx-nav-txt {
+    height: 56px;
+    color: white !important;
+    font-family: "Inter", sans-serif;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nyx-login-body {
+    display: block;
+    margin-top: 60px;
+}
+
+.nyx-login-box {
+    width: 1232px;
+    height: 800px;
+    background: gray;
+    justify-self: center;
+}
+
+.nyx-login-main {
+    width: 616px;
+    height: 100%;
+    background: white;
+    padding-top: 120px;
+}
+
+.login-container {
+    width: 530px;
+    justify-self: center;
+}
+
+.login-box {
+    width: 100%;
+    height: 427px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+/*    justify-self: center;*/
+}
+
+.login-head {
+    height: 75px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 68px;
+    text-align: center;
+}
+
+.login-subhead {
+    height: 64px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 36px;
+    line-height: 44px;
+    text-align: center;
+}
+
+.login-input-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.login-input-head {
+    height: 39px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 39px;
+}
+
+.login-input {
+    height: 45px;
+    width: 100%;
+    background: lightgrey;
+}
+
+.login-btn {
+    margin-top: 120px;
+    width: 100%;
+    height: 73px;
+    background: grey;
+    align-content: center;
+}
+
+.login-btn-txt {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 39px;
+    color: #FFFFFF;
+    justify-self: center;
+}
+
+
+.nyx-home-body {
+    margin-top: 90px;
+    margin-right: 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+}
+
+.hsection {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.hsection-head {
+    height: 44px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-size: 32px;
+    line-height: 44px;
+    color: #000000;
+/*    align-self: stretch;*/
+}
+
+.hsection-body {
+    width: 1220px;
+    height: 320px;
+    background: lightgrey;
+}
