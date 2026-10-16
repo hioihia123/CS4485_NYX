@@ -2,7 +2,7 @@
 
 namespace NyxInsightsWeb.Models
 {
-    public class UserAuth
+    public class User
     {
         public int user_id { get; set; }
         [Required]
