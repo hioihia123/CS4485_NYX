@@ -109,6 +109,7 @@ body {
     height: 45px;
     width: 100%;
     background: lightgrey;
+    text-decoration: none;
 }
 
 .login-btn {
@@ -157,5 +158,5 @@ body {
 .hsection-body {
     width: 1220px;
     height: 320px;
-    background: lightgrey;
+    background: white;
 }

@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using NyxInsightsWeb.Models;
 
+
 namespace NyxInsightsWeb.Controllers
 {
     public class HomeController : Controller
@@ -15,23 +16,13 @@ namespace NyxInsightsWeb.Controllers
 
         public IActionResult Index()
         {
-            return View();
-        }
+            //if (HttpContext.Session.GetString("SessionName") == null)
+            if (HttpContext.Session.GetString("SessionName") == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
 
-        public IActionResult Login()
-        {
             return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

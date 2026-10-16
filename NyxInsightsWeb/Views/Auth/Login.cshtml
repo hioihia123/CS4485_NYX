@@ -1,4 +1,5 @@
-﻿@*
+﻿@model User
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
@@ -7,27 +8,34 @@
 <div class="nyx-login-body">
     <div class="nyx-login-box">
         <div class="nyx-login-main">
-            <div class="login-container">
+            <form method="post" class="login-container">
                 <div class="login-box">
                     <div class="login-head">Nyx Insights</div>
 
                     <div class="login-subhead">Sign in to your account.</div>
 
                     <div class="login-input-box">
-                        <div class="login-input-head">Email/Username:</div>
-                        <div class="login-input"></div>
+                        <div class="login-input-head">Username:</div>
+                        <input asp-for="username" type="text" class="login-input" id="username" />
                     </div>
 
                     <div class="login-input-box">
                         <div class="login-input-head">Password:</div>
-                        <div class="login-input"></div>
+                        <input asp-for="password" class="login-input" id="password" />
                     </div>
                 </div>
 
-                <div class="login-btn">
+                <button class="login-btn" id="login-btn" type="submit">
                     <div class="login-btn-txt">Login</div>
-                </div>
-            </div>
+                </button>
+            </form>
         </div>
     </div>
 </div>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+
+</script>
+
