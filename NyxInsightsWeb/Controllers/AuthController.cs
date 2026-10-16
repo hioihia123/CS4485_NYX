@@ -31,7 +31,7 @@ namespace NyxInsightsWeb.Controllers
             //placeholder.username = "place";
             //placeholder.password = "holder";
 
-            if (user.username == "place" && user.password == "holder")
+            if ((user.username == "place" || user.username == "second") && (user.password == "holder" || user.password == "second"))
             {
                 HttpContext.Session.SetString("SessionName", user.username);
                 return RedirectToAction("Index","Home");
