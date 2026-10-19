@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using NyxInsightsWeb.Models;
-
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace NyxInsightsWeb.Controllers
 {
@@ -30,5 +30,18 @@ namespace NyxInsightsWeb.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Login", "Auth");
         }
+
+	public IActionResult Error()
+	{
+	    var error = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+	    _logger.LogError(
+        	error?.Error,
+       		"Unhandled exception at {Path}",
+        	error?.Path
+    	    );
+
+    return StatusCode(500,
+        "An internal server error occurred. Check Azure logs.");
+	}
     }
 }
