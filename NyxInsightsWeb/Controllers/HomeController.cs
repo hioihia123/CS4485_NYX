@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using NyxInsightsWeb.Models;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NyxInsightsWeb.Controllers
 {
@@ -14,23 +15,14 @@ namespace NyxInsightsWeb.Controllers
             _logger = logger;
         }
 
+	[Authorize]
         public IActionResult Index()
         {
-            //if (HttpContext.Session.GetString("SessionName") == null)
-            if (HttpContext.Session.GetString("SessionName") == null)
-            {
-                return RedirectToAction("Login", "Auth");
-            }
 
             return View();
         }
 
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Login", "Auth");
-        }
-
+	[AllowAnonymous]
 	public IActionResult Error()
 	{
 	    var error = HttpContext.Features.Get<IExceptionHandlerPathFeature>();

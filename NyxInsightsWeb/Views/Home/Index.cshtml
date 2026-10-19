@@ -4,7 +4,11 @@
 
 <div class="nyx-home-body">
 
-    <a asp-controller="Home" asp-action="Logout">Logout</a>
+   <form asp-area="Identity"
+         asp-page="/Account/Logout"
+         method="post">
+   	 <button type="submit">Logout</button>
+   </form>
 
     <div class="hsection">
         <div class="hsection-head" style="font-weight: bold;">Health Overview & Recommendations</div>
