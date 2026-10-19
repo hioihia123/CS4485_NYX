@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - NyxInsightsWeb</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <style>
+        body {
+            background-color: #ffffff !important;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            color: #212529;
+        }
+
+        .identity-navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #dee2e6;
+            padding: 16px 0;
+        }
+
+        .identity-brand {
+            color: #212529;
+            font-size: 22px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .identity-main {
+            flex: 1;
+            width: 100%;
+        }
+
+        .identity-footer {
+            background-color: #ffffff;
+            border-top: 1px solid #dee2e6;
+            padding: 16px 0;
+            color: #6c757d;
+        }
+
+        .form-control {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="identity-navbar">
+            <div class="container d-flex align-items-center">
+                <a class="identity-brand" href="/">
+                    NyxInsightsWeb
+                </a>
+
+                <div class="ms-auto">
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="identity-main">
+        <div class="container py-4">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="identity-footer">
+        <div class="container">
+            &copy; 2026 - NyxInsightsWeb
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
