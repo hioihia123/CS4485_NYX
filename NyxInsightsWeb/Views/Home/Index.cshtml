@@ -1,27 +1,618 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿
+@{
+    ViewData["Title"] = "Nyx Insights Dashboard";
 }
 
-<div class="nyx-home-body">
+<style>
+    .nyx-dashboard {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 20px;
+        color: #243047;
+    }
 
-   <form asp-area="Identity"
-         asp-page="/Account/Logout"
-         method="post">
-   	 <button type="submit">Logout</button>
-   </form>
+    .nyx-header {
+        margin-bottom: 28px;
+    }
 
-    <div class="hsection">
-        <div class="hsection-head" style="font-weight: bold;">Health Overview & Recommendations</div>
-        <div class="hsection-body"></div>
+    .nyx-header h1 {
+        font-size: 30px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .nyx-muted {
+        color: #667085;
+        line-height: 1.6;
+    }
+
+    .nyx-card {
+        background: white;
+        border: 1px solid #e1e6ed;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .nyx-card h2 {
+        font-size: 21px;
+        margin-top: 0;
+        margin-bottom: 8px;
+    }
+
+    .nyx-form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 24px;
+    }
+
+    .nyx-field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .nyx-field label {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .nyx-field input {
+        width: 100%;
+        min-width: 0;
+        padding: 11px;
+        border: 1px solid #cbd2dc;
+        border-radius: 7px;
+        font-size: 15px;
+        box-sizing: border-box;
+    }
+
+    .nyx-field input:focus {
+        outline: 2px solid #8aa7f8;
+        border-color: #5279dc;
+    }
+
+    .nyx-field small {
+        color: #667085;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .nyx-button {
+        border: none;
+        border-radius: 8px;
+        padding: 13px 20px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 22px;
+    }
+
+    .nyx-primary {
+        color: white;
+        background: #3158a6;
+    }
+
+    .nyx-primary:disabled {
+        opacity: 0.6;
+        cursor: wait;
+    }
+
+    .nyx-logout {
+        float: right;
+    }
+
+    .nyx-logout button {
+        background: white;
+        border: 1px solid #cbd2dc;
+        border-radius: 7px;
+        padding: 8px 14px;
+        cursor: pointer;
+    }
+
+    .nyx-results {
+        display: none;
+    }
+
+    .nyx-score-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 20px;
+    }
+
+    .nyx-score {
+        border: 1px solid #e1e6ed;
+        background: #f8faff;
+        border-radius: 10px;
+        padding: 22px;
+    }
+
+    .nyx-score-label {
+        font-size: 14px;
+        color: #667085;
+        margin-bottom: 10px;
+    }
+
+    .nyx-score-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #243e75;
+    }
+
+    .nyx-explanation {
+        white-space: pre-wrap;
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+    }
+
+    .nyx-warning {
+        background: #fff8e8;
+        border: 1px solid #ead7a4;
+        border-radius: 8px;
+        padding: 14px;
+        margin-top: 18px;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    .nyx-error {
+        display: none;
+        background: #fff0f0;
+        border: 1px solid #e5b5b5;
+        border-radius: 8px;
+        padding: 14px;
+        margin-top: 18px;
+        color: #8c2525;
+    }
+
+    .nyx-section-title {
+        margin-top: 28px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #e1e6ed;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .nyx-secondary-text {
+        font-size: 13px;
+        color: #667085;
+        line-height: 1.6;
+    }
+
+    .nyx-logout::after {
+        content: "";
+        display: block;
+        clear: both;
+    }
+
+    @@media (max-width: 760px) {
+        .nyx-form-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .nyx-dashboard {
+            padding: 0 12px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .nyx-form-grid,
+        .nyx-score-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .nyx-card {
+            padding: 17px;
+        }
+
+        .nyx-header h1 {
+            font-size: 25px;
+        }
+    }
+</style>
+
+<div class="nyx-dashboard">
+
+    <div class="nyx-logout">
+        <form asp-area="Identity"
+              asp-page="/Account/Logout"
+              method="post">
+            <button type="submit">Logout</button>
+        </form>
     </div>
 
-    <div class="hsection">
-        <div class="hsection-head">Sleep Metrics</div>
-        <div class="hsection-body"></div>
-    </div>
+    <header class="nyx-header">
+        <h1>Nyx Insights</h1>
+        <p class="nyx-muted">
+            Explore how your wearable health data relates to estimated
+            stress and next-night sleep efficiency.
+        </p>
+    </header>
 
-    <div class="hsection">
-        <div class="hsection-head">External Resources</div>
-        <div class="hsection-body"></div>
-    </div>
+    <section class="nyx-card">
+        <h2>Enter Your Wearable Data</h2>
+
+        <p class="nyx-muted">
+            Enter the values from your wearable data for the period
+            represented by your dataset. All 12 fields are required.
+        </p>
+
+        <form id="predictionForm">
+
+            <div class="nyx-section-title">Heart Rate and Wellness</div>
+
+            <div class="nyx-form-grid">
+
+                <div class="nyx-field">
+                    <label for="bpm">Heart Rate (BPM)</label>
+                    <input id="bpm" name="bpm" type="number"
+                           min="0" max="300" step="any"
+                           placeholder="e.g. 80" required />
+                    <small>Heart rate in beats per minute.</small>
+                </div>
+
+                <div class="nyx-field">
+                    <label for="mindfulness_session">
+                        Mindfulness Session
+                    </label>
+                    <input id="mindfulness_session"
+                           name="mindfulness_session"
+                           type="number" min="0" step="any"
+                           placeholder="e.g. 0" required />
+                    <small>Use the numeric value expected by the model.</small>
+                </div>
+
+                <div class="nyx-field">
+                    <label for="exertion_points_percentage">
+                        Exertion Points Percentage
+                    </label>
+                    <input id="exertion_points_percentage"
+                           name="exertion_points_percentage"
+                           type="number" min="0" max="1" step="any"
+                           placeholder="e.g. 0.75" required />
+                    <small>Enter as a decimal from 0 to 1.</small>
+                </div>
+
+            </div>
+
+            <div class="nyx-section-title">Daily Activity</div>
+
+            <div class="nyx-form-grid">
+
+                <div class="nyx-field">
+                    <label for="very_active_minutes">
+                        Very Active Minutes
+                    </label>
+                    <input id="very_active_minutes"
+                           name="very_active_minutes"
+                           type="number" min="0" step="any"
+                           placeholder="e.g. 20" required />
+                </div>
+
+                <div class="nyx-field">
+                    <label for="moderately_active_minutes">
+                        Moderately Active Minutes
+                    </label>
+                    <input id="moderately_active_minutes"
+                           name="moderately_active_minutes"
+                           type="number" min="0" step="any"
+                           placeholder="e.g. 30" required />
+                </div>
+
+                <div class="nyx-field">
+                    <label for="lightly_active_minutes">
+                        Lightly Active Minutes
+                    </label>
+                    <input id="lightly_active_minutes"
+                           name="lightly_active_minutes"
+                           type="number" min="0" step="any"
+                           placeholder="e.g. 131" required />
+                </div>
+
+                <div class="nyx-field">
+                    <label for="sedentary_minutes">
+                        Sedentary Minutes
+                    </label>
+                    <input id="sedentary_minutes"
+                           name="sedentary_minutes"
+                           type="number" min="0" step="any"
+                           placeholder="e.g. 600" required />
+                </div>
+
+                <div class="nyx-field">
+                    <label for="steps">Steps</label>
+                    <input id="steps" name="steps"
+                           type="number" min="0" step="any"
+                           placeholder="e.g. 7389" required />
+                </div>
+
+                <div class="nyx-field">
+                    <label for="calories">Calories</label>
+                    <input id="calories" name="calories"
+                           type="number" min="0" step="any"
+                           placeholder="e.g. 2059" required />
+                </div>
+
+            </div>
+
+            <div class="nyx-section-title">
+                Heart Rate Zone Minutes
+            </div>
+
+            <div class="nyx-form-grid">
+
+                <div class="nyx-field">
+                    <label for="minutes_in_default_zone_1">
+                        Zone 1 Minutes
+                    </label>
+                    <input id="minutes_in_default_zone_1"
+                           name="minutes_in_default_zone_1"
+                           type="number" min="0" step="any"
+                           placeholder="e.g. 123" required />
+                </div>
+
+                <div class="nyx-field">
+                    <label for="minutes_in_default_zone_2">
+                        Zone 2 Minutes
+                    </label>
+                    <input id="minutes_in_default_zone_2"
+                           name="minutes_in_default_zone_2"
+                           type="number" min="0" step="any"
+                           placeholder="e.g. 0" required />
+                </div>
+
+                <div class="nyx-field">
+                    <label for="minutes_in_default_zone_3">
+                        Zone 3 Minutes
+                    </label>
+                    <input id="minutes_in_default_zone_3"
+                           name="minutes_in_default_zone_3"
+                           type="number" min="0" step="any"
+                           placeholder="e.g. 0" required />
+                </div>
+
+            </div>
+
+            <div class="nyx-warning">
+                <strong>Important:</strong> Enter data in the same units
+                and format expected by the model. These predictions are
+                experimental estimates, not medical measurements or advice.
+            </div>
+
+            <button id="analyzeButton"
+                    class="nyx-button nyx-primary"
+                    type="submit">
+                Analyze My Health Data
+            </button>
+
+            <p id="loadingMessage" class="nyx-muted" hidden>
+                Analyzing your data. This may take a few moments...
+            </p>
+
+            <div id="errorMessage" class="nyx-error" role="alert"></div>
+
+        </form>
+    </section>
+
+    <section id="resultsSection" class="nyx-results">
+
+        <div class="nyx-card">
+            <h2>Your Prediction Results</h2>
+
+            <p class="nyx-muted">
+                These values were generated by the Nyx Insights prediction
+                models using the inputs you submitted.
+            </p>
+
+            <div class="nyx-score-grid">
+
+                <div class="nyx-score">
+                    <div class="nyx-score-label">
+                        Estimated Stress Score
+                    </div>
+                    <div id="stressScore" class="nyx-score-value">--</div>
+                    <p class="nyx-secondary-text">
+                        On the model's stress scale.
+                    </p>
+                </div>
+
+                <div class="nyx-score">
+                    <div class="nyx-score-label">
+                        Estimated Next-Night Sleep Efficiency
+                    </div>
+                    <div id="sleepScore" class="nyx-score-value">--</div>
+                    <p class="nyx-secondary-text">
+                        Predicted percentage, not a measured sleep result.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="nyx-warning">
+                <strong>Model limitations:</strong>
+                The current models have shown weak performance in evaluation.
+                Their predictions may be inaccurate and should not be used
+                to make medical decisions.
+            </div>
+        </div>
+
+        <div class="nyx-card">
+            <h2>AI Health Data Analysis</h2>
+
+            <p class="nyx-muted">
+                This explanation is generated by the Nyx Insights AI agent
+                using the model results and available performance information.
+            </p>
+
+            <div id="explanation" class="nyx-explanation">
+            </div>
+        </div>
+
+        <div class="nyx-card">
+            <h2>Model Performance</h2>
+
+            <p class="nyx-muted">
+                These evaluation metrics help put the predictions in context.
+                Lower MAE is better; an R² below zero means the model
+                performed worse than a simple mean-based baseline on the
+                evaluated data.
+            </p>
+
+            <div id="performanceMetrics"></div>
+        </div>
+
+    </section>
+
 </div>
+
+<script>
+    const predictionForm = document.getElementById("predictionForm");
+    const analyzeButton = document.getElementById("analyzeButton");
+    const loadingMessage = document.getElementById("loadingMessage");
+    const errorMessage = document.getElementById("errorMessage");
+    const resultsSection = document.getElementById("resultsSection");
+
+    predictionForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        errorMessage.style.display = "none";
+        errorMessage.textContent = "";
+        resultsSection.style.display = "none";
+        analyzeButton.disabled = true;
+        analyzeButton.textContent = "Analyzing...";
+        loadingMessage.hidden = false;
+
+        try {
+            const formData = new FormData(predictionForm);
+            const features = {};
+
+            for (const [name, value] of formData.entries()) {
+                const numberValue = Number(value);
+
+                if (!Number.isFinite(numberValue)) {
+                    throw new Error("Please enter a valid number for every field.");
+                }
+
+                features[name] = numberValue;
+            }
+
+            const response = await fetch(
+                "/api/predictions/predict-and-explain",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(features)
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.error || "The analysis request failed."
+                );
+            }
+
+            const predictionResult = data.predictionResult;
+            const predictions = predictionResult.predictions;
+
+            document.getElementById("stressScore").textContent =
+                Number(predictions.stress_score).toFixed(2);
+
+            document.getElementById("sleepScore").textContent =
+                Number(predictions.sleep_efficiency_next_night).toFixed(2) + "%";
+
+            document.getElementById("explanation").textContent =
+                data.explanation || "No explanation was returned.";
+
+            displayPerformance(predictionResult.model_performance);
+
+            resultsSection.style.display = "block";
+            resultsSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+        catch (error) {
+            errorMessage.textContent =
+                error.message ||
+                "Something went wrong while analyzing your data.";
+
+            errorMessage.style.display = "block";
+        }
+        finally {
+            analyzeButton.disabled = false;
+            analyzeButton.textContent = "Analyze My Health Data";
+            loadingMessage.hidden = true;
+        }
+    });
+
+    function displayPerformance(performance) {
+        const container = document.getElementById("performanceMetrics");
+        container.replaceChildren();
+
+        if (!performance) {
+            container.textContent = "Performance information is unavailable.";
+            return;
+        }
+
+        const table = document.createElement("table");
+        table.style.width = "100%";
+        table.style.borderCollapse = "collapse";
+
+        const header = document.createElement("tr");
+
+        ["Metric", "Stress Model", "Sleep Model"].forEach(function (label) {
+            const th = document.createElement("th");
+            th.textContent = label;
+            th.style.textAlign = "left";
+            th.style.padding = "10px";
+            th.style.borderBottom = "1px solid #e1e6ed";
+            header.appendChild(th);
+        });
+
+        table.appendChild(header);
+
+        const rows = [
+            ["Evaluation samples", "n", value => String(value)],
+            ["Mean absolute error (MAE)", "mae", value => Number(value).toFixed(3)],
+            ["Baseline MAE", "baseline_mae", value => Number(value).toFixed(3)],
+            ["R² score", "r2", value => Number(value).toFixed(3)]
+        ];
+
+        rows.forEach(function (rowInfo) {
+            const row = document.createElement("tr");
+
+            const labelCell = document.createElement("td");
+            labelCell.textContent = rowInfo[0];
+            row.appendChild(labelCell);
+
+            ["stress", "sleep"].forEach(function (modelName) {
+                const cell = document.createElement("td");
+                const value = performance[modelName]?.[rowInfo[1]];
+
+                cell.textContent =
+                    value === undefined || value === null
+                        ? "N/A"
+                        : rowInfo[2](value);
+
+                row.appendChild(cell);
+            });
+
+            Array.from(row.children).forEach(function (cell) {
+                cell.style.padding = "10px";
+                cell.style.borderBottom = "1px solid #e1e6ed";
+                cell.style.textAlign = "left";
+            });
+
+            table.appendChild(row);
+        });
+
+        container.appendChild(table);
+    }
+</script>

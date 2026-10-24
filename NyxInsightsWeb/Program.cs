@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NyxInsightsWeb.Data;
+using NyxInsightsWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpClient<AzureMlPredictionService>();
+builder.Services.AddScoped<FoundryAgentService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(
