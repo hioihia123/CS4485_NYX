@@ -1,4 +1,4 @@
-using System.Net.Http.Headers;
+
 using System.Text;
 using System.Text.Json;
 
@@ -20,24 +20,27 @@ namespace NyxInsightsWeb.Services
         public async Task<JsonDocument> PredictAsync(
             Dictionary<string, object?> features)
         {
+            // New FastAPI prediction service URL
             string? scoringUri =
-                _configuration["AzureML:ScoringUri"];
+                _configuration["NyxPredictor:ScoringUri"];
 
-            string? endpointKey =
-                _configuration["AzureML:EndpointKey"];
+            // Private key shared with the FastAPI service
+            string? apiKey =
+                _configuration["NyxPredictor:ApiKey"];
 
             if (string.IsNullOrWhiteSpace(scoringUri))
             {
                 throw new InvalidOperationException(
-                    "Azure ML scoring URL is not configured.");
+                    "NYX prediction API URL is not configured.");
             }
 
-            if (string.IsNullOrWhiteSpace(endpointKey))
+            if (string.IsNullOrWhiteSpace(apiKey))
             {
                 throw new InvalidOperationException(
-                    "Azure ML endpoint key is not configured.");
+                    "NYX prediction API key is not configured.");
             }
 
+            // Same input schema
             var requestBody = new
             {
                 input_data = features
@@ -49,10 +52,9 @@ namespace NyxInsightsWeb.Services
                 HttpMethod.Post,
                 scoringUri);
 
-            request.Headers.Authorization =
-                new AuthenticationHeaderValue(
-                    "Bearer",
-                    endpointKey);
+            // FastAPI uses X-Nyx-Api-Key,
+            // not Azure ML Bearer authentication.
+            request.Headers.Add("X-Nyx-Api-Key", apiKey);
 
             request.Content = new StringContent(
                 json,
@@ -68,11 +70,12 @@ namespace NyxInsightsWeb.Services
             if (!response.IsSuccessStatusCode)
             {
                 throw new HttpRequestException(
-                    $"Azure ML returned HTTP " +
-                    $"{(int)response.StatusCode}: {responseBody}");
+                    $"NYX prediction API returned HTTP " +
+                    $"{(int)response.StatusCode}.");
             }
 
             return JsonDocument.Parse(responseBody);
         }
     }
 }
+
