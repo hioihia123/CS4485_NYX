@@ -222,6 +222,71 @@ namespace NyxInsightsWeb.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("NyxInsightsWeb.Models.HealthPrediction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AiExplanation")
+                        .HasColumnType("text");
+
+                    b.Property<double>("Bpm")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Calories")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<double>("ExertionPointsPercentage")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("LightlyActiveMinutes")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("MindfulnessSession")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("MinutesInDefaultZone1")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("MinutesInDefaultZone2")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("MinutesInDefaultZone3")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("ModeratelyActiveMinutes")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("SedentaryMinutes")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("SleepEfficiencyNextNight")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Steps")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("StressScore")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double>("VeryActiveMinutes")
+                        .HasColumnType("double precision");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HealthPredictions");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
