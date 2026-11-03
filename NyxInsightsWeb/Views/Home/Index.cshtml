@@ -873,7 +873,7 @@
 
 
     <!-- =========================================================
-         MODERN TREND DASHBOARD
+         TREND DASHBOARD
          ========================================================= -->
 
     <section id="trendsSection"
@@ -882,11 +882,6 @@
 
 
         <h2>Health Trends</h2>
-
-        <p class="nyx-muted">
-            Historical analytics generated from predictions saved
-            to your account.
-        </p>
 
 
         <!-- KPI CARDS -->
@@ -974,6 +969,33 @@
 
         </div>
 
+       <div id="latestAiCard"
+     class="nyx-chart-card"
+     style="margin-bottom: 24px;">
+
+    <div class="nyx-chart-header">
+
+        <div>
+            <h3 class="nyx-chart-title">
+                Latest AI Health Analysis
+            </h3>
+
+        </div>
+
+        <span class="nyx-chart-badge">
+            AI Explanation
+        </span>
+
+    </div>
+
+    <div id="latestAiExplanation"
+         class="nyx-explanation">
+
+        No AI explanation is available yet.
+
+    </div>
+
+</div>
 
         <!-- CHART GRID -->
 
@@ -991,10 +1013,6 @@
                         <h3 class="nyx-chart-title">
                             Stress Trend
                         </h3>
-
-                        <p class="nyx-chart-description">
-                            Estimated stress score across saved analyses.
-                        </p>
 
                     </div>
 
@@ -1028,9 +1046,6 @@
                             Sleep Efficiency
                         </h3>
 
-                        <p class="nyx-chart-description">
-                            Predicted next-night sleep efficiency over time.
-                        </p>
 
                     </div>
 
@@ -1064,11 +1079,6 @@
                             Activity & Heart Rate
                         </h3>
 
-                        <p class="nyx-chart-description">
-                            Submitted step count and BPM across
-                            saved health analyses.
-                        </p>
-
                     </div>
 
 
@@ -1100,11 +1110,6 @@
     <section class="nyx-card">
 
         <h2>Prediction History</h2>
-
-        <p class="nyx-muted">
-            Saved analyses for your currently logged-in account.
-        </p>
-
 
         <div id="historyStatus"
              class="nyx-muted"
@@ -1752,6 +1757,17 @@
         const latest =
             chronological[
                 chronological.length - 1];
+
+        const latestAiExplanation =
+ 	    document.getElementById( "latestAiExplanation");
+
+
+	if (latest.aiExplanation && latest.aiExplanation.trim() !== ""){
+    		latestAiExplanation.textContent = latest.aiExplanation;
+	}
+	else{
+    		latestAiExplanation.textContent ="No AI explanation was saved for the latest prediction.";
+	}
 
 
         // --------------------------------------------------------
