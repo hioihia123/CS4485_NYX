@@ -6,6 +6,7 @@ using NyxInsightsWeb.Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient<AzureMlPredictionService>();
 builder.Services.AddScoped<FoundryAgentService>();
+builder.Services.AddScoped<GoogleHealthAuthService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(
@@ -56,6 +57,7 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
+    
+app.MapControllers();
 app.MapRazorPages();
 app.Run();
