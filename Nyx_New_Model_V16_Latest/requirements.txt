@@ -1,0 +1,8 @@
+numpy
+pandas==3.0.6
+scipy
+joblib
+threadpoolctl
+# setup_python314.bat installs and validates a Python-3.14-compatible
+# scikit-learn build separately because Windows Application Control
+# has blocked some compiled scikit-learn builds on the development PC.

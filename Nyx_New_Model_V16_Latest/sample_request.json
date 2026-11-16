@@ -1,0 +1,233 @@
+{
+  "input_data": {
+    "current": {
+      "date": "2026-11-16",
+      "daily": {
+        "bpm": 81.4,
+        "mindfulness_session": false,
+        "exertion_points_percentage": 0.68,
+        "very_active_minutes": 22,
+        "moderately_active_minutes": 18,
+        "lightly_active_minutes": 145,
+        "sedentary_minutes": 930,
+        "minutes_in_default_zone_1": 132,
+        "minutes_in_default_zone_2": 14,
+        "minutes_in_default_zone_3": 2,
+        "steps": 8450,
+        "calories": 2240,
+        "sleep_efficiency": 93.0
+      },
+      "hourly": [
+        {
+          "hour": 0,
+          "bpm": 63,
+          "mindfulness_session": false,
+          "steps": 20,
+          "calories": 68,
+          "minutes_in_default_zone_1": 0,
+          "minutes_in_default_zone_2": 0,
+          "minutes_in_default_zone_3": 0
+        },
+        {
+          "hour": 8,
+          "bpm": 69,
+          "mindfulness_session": false,
+          "steps": 240,
+          "calories": 78,
+          "minutes_in_default_zone_1": 3,
+          "minutes_in_default_zone_2": 0,
+          "minutes_in_default_zone_3": 0
+        },
+        {
+          "hour": 12,
+          "bpm": 82,
+          "mindfulness_session": false,
+          "steps": 780,
+          "calories": 105,
+          "minutes_in_default_zone_1": 8,
+          "minutes_in_default_zone_2": 1,
+          "minutes_in_default_zone_3": 0
+        },
+        {
+          "hour": 17,
+          "bpm": 94,
+          "mindfulness_session": false,
+          "steps": 1550,
+          "calories": 155,
+          "minutes_in_default_zone_1": 14,
+          "minutes_in_default_zone_2": 5,
+          "minutes_in_default_zone_3": 1
+        },
+        {
+          "hour": 21,
+          "bpm": 76,
+          "mindfulness_session": true,
+          "steps": 150,
+          "calories": 82,
+          "minutes_in_default_zone_1": 2,
+          "minutes_in_default_zone_2": 0,
+          "minutes_in_default_zone_3": 0
+        }
+      ]
+    },
+    "history": [
+      {
+        "date": "2026-11-15",
+        "daily": {
+          "bpm": 78.9,
+          "mindfulness_session": false,
+          "exertion_points_percentage": 0.61,
+          "very_active_minutes": 10,
+          "moderately_active_minutes": 15,
+          "lightly_active_minutes": 132,
+          "sedentary_minutes": 1010,
+          "minutes_in_default_zone_1": 121,
+          "minutes_in_default_zone_2": 8,
+          "minutes_in_default_zone_3": 0,
+          "steps": 7250,
+          "calories": 2085,
+          "sleep_efficiency": 95.0
+        },
+        "hourly": [
+          {
+            "hour": 8,
+            "bpm": 67,
+            "steps": 180,
+            "calories": 73
+          },
+          {
+            "hour": 13,
+            "bpm": 79,
+            "steps": 620,
+            "calories": 98
+          },
+          {
+            "hour": 18,
+            "bpm": 84,
+            "steps": 1100,
+            "calories": 126
+          }
+        ],
+        "survey_stress_score": 2.5
+      },
+      {
+        "date": "2026-11-14",
+        "daily": {
+          "bpm": 80.2,
+          "mindfulness_session": true,
+          "exertion_points_percentage": 0.64,
+          "very_active_minutes": 18,
+          "moderately_active_minutes": 12,
+          "lightly_active_minutes": 140,
+          "sedentary_minutes": 970,
+          "minutes_in_default_zone_1": 128,
+          "minutes_in_default_zone_2": 11,
+          "minutes_in_default_zone_3": 1,
+          "steps": 7900,
+          "calories": 2160,
+          "sleep_efficiency": 91.0
+        },
+        "hourly": [
+          {
+            "hour": 9,
+            "bpm": 71,
+            "steps": 300,
+            "calories": 80
+          },
+          {
+            "hour": 14,
+            "bpm": 86,
+            "steps": 900,
+            "calories": 112
+          },
+          {
+            "hour": 20,
+            "bpm": 78,
+            "mindfulness_session": true,
+            "steps": 190,
+            "calories": 86
+          }
+        ],
+        "survey_stress_score": 3.0
+      },
+      {
+        "date": "2026-11-13",
+        "survey_stress_score": 2.0,
+        "daily": {
+          "bpm": 77.5,
+          "mindfulness_session": false,
+          "exertion_points_percentage": 0.58,
+          "very_active_minutes": 8,
+          "moderately_active_minutes": 10,
+          "lightly_active_minutes": 125,
+          "sedentary_minutes": 1030,
+          "minutes_in_default_zone_1": 118,
+          "minutes_in_default_zone_2": 5,
+          "minutes_in_default_zone_3": 0,
+          "steps": 6800,
+          "calories": 2020,
+          "sleep_efficiency": 96.0
+        },
+        "hourly": [
+          {
+            "hour": 8,
+            "bpm": 66,
+            "steps": 150,
+            "calories": 70
+          },
+          {
+            "hour": 14,
+            "bpm": 77,
+            "steps": 700,
+            "calories": 100
+          },
+          {
+            "hour": 19,
+            "bpm": 79,
+            "steps": 450,
+            "calories": 96
+          }
+        ]
+      },
+      {
+        "date": "2026-11-12",
+        "survey_stress_score": 3.5,
+        "daily": {
+          "bpm": 82.1,
+          "mindfulness_session": false,
+          "exertion_points_percentage": 0.71,
+          "very_active_minutes": 25,
+          "moderately_active_minutes": 20,
+          "lightly_active_minutes": 150,
+          "sedentary_minutes": 900,
+          "minutes_in_default_zone_1": 135,
+          "minutes_in_default_zone_2": 16,
+          "minutes_in_default_zone_3": 3,
+          "steps": 9100,
+          "calories": 2320,
+          "sleep_efficiency": 89.0
+        },
+        "hourly": [
+          {
+            "hour": 7,
+            "bpm": 70,
+            "steps": 220,
+            "calories": 76
+          },
+          {
+            "hour": 13,
+            "bpm": 88,
+            "steps": 1000,
+            "calories": 125
+          },
+          {
+            "hour": 18,
+            "bpm": 96,
+            "steps": 1600,
+            "calories": 160
+          }
+        ]
+      }
+    ]
+  }
+}
