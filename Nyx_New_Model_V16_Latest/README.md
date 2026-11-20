@@ -47,6 +47,17 @@ After training:
 .\run_local_test.bat
 ```
 
+## Anomaly detection
+
+Scoring compares each winner-model output against two baselines:
+
+- the user's personal baseline, using prior survey history for stress and prior sleep history for sleep
+- the training population baseline, using the mean and population standard deviation of labeled training targets
+
+The default anomaly threshold is an absolute z-score of 2.0. The JSON response includes
+`anomaly_detection` for both predictions, with personal and population deviation details
+and a `high`, `low`, or `normal` direction.
+
 ## Important experiment in metadata.json
 
 V16 reports three sleep results separately:

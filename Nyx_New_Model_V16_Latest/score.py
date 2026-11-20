@@ -31,6 +31,8 @@ _metadata = None
 _stress_features = None
 _sleep_features = None
 _sleep_fallback = None
+_population_baselines = None
+_anomaly_threshold = 2.0
 
 
 # ============================================================
@@ -43,6 +45,7 @@ _sleep_fallback = None
 def init():
     global _stress_model, _sleep_model, _metadata
     global _stress_features, _sleep_features, _sleep_fallback
+    global _population_baselines, _anomaly_threshold
 
     default_dir = Path(__file__).resolve().parent / "model_bundle_v16"
     model_dir = Path(os.environ.get("AZUREML_MODEL_DIR", default_dir))
@@ -61,6 +64,10 @@ def init():
     _stress_features = _metadata.get("stress_feature_set")
     _sleep_features = _metadata.get("sleep_feature_set_before_selection")
     _sleep_fallback = float(_metadata.get("sleep_fallback_mean", 90.0))
+    _population_baselines = _metadata.get("population_baselines", {})
+    _anomaly_threshold = float(
+        _metadata.get("anomaly_detection", {}).get("threshold", 2.0)
+    )
 
     if not _stress_features or not _sleep_features:
         raise ValueError("V16 metadata.json is missing the stress/sleep feature sets")
@@ -93,6 +100,73 @@ def _sleep_baseline_for_row(row):
     return float(_sleep_fallback)
 
 
+def _first_finite(row, names):
+    for name in names:
+        value = pd.to_numeric(row.get(name), errors="coerce")
+        if isinstance(value, pd.Series):
+            value = value.iloc[0]
+        if pd.notna(value):
+            value = float(value)
+            if np.isfinite(value):
+                return value
+    return None
+
+
+def _anomaly(value, personal_baseline, personal_std, population_baseline, population_std, threshold):
+    population = population_baseline or {}
+    population_mean = population.get("mean")
+    population_std_value = population.get("std")
+
+    personal_delta = None
+    personal_z_score = None
+    personal_anomaly = False
+    if personal_baseline is not None:
+        personal_delta = float(value - personal_baseline)
+        if personal_std is not None and personal_std > 0:
+            personal_z_score = float(personal_delta / personal_std)
+            personal_anomaly = abs(personal_z_score) >= threshold
+
+    population_z_score = None
+    population_anomaly = False
+    if population_mean is not None and population_std_value is not None and population_std_value > 0:
+        population_z_score = float((value - population_mean) / population_std_value)
+        population_anomaly = abs(population_z_score) >= threshold
+
+    z_sources = [
+        z_score
+        for z_score in (personal_z_score, population_z_score)
+        if z_score is not None
+    ]
+    direction_source = max(z_sources, key=abs) if z_sources else None
+    if direction_source is None:
+        direction = "normal"
+    elif direction_source > threshold:
+        direction = "high"
+    elif direction_source < -threshold:
+        direction = "low"
+    else:
+        direction = "normal"
+
+    return {
+        "is_anomaly": bool(personal_anomaly or population_anomaly),
+        "direction": direction,
+        "personal": {
+            "baseline": personal_baseline,
+            "std": personal_std,
+            "deviation": personal_delta,
+            "z_score": personal_z_score,
+            "is_anomaly": bool(personal_anomaly),
+        },
+        "population": {
+            "baseline": population_mean,
+            "std": population_std_value,
+            "deviation": None if population_mean is None else float(value - population_mean),
+            "z_score": population_z_score,
+            "is_anomaly": bool(population_anomaly),
+        },
+    }
+
+
 # ============================================================
 # SECTION 3: BUILD FEATURES AND RETURN A PREDICTION
 # ============================================================
@@ -120,6 +194,40 @@ def run(raw_data):
         sleep_base = _sleep_baseline_for_row(row)
         sleep_delta = float(_sleep_model.predict(row[_sleep_features])[0])
         sleep = float(np.clip(sleep_base + sleep_delta, 0.0, 100.0))
+
+        stress_personal_baseline = _first_finite(
+            row,
+            ["stress_personal_baseline"],
+        )
+        stress_personal_std = _first_finite(
+            row,
+            ["previous_10real_survey_std", "previous_5real_survey_std", "previous_3real_survey_std"],
+        )
+        sleep_personal_std = _first_finite(
+            row,
+            [
+                "sleep_efficiency_previous_30day_std",
+                "sleep_efficiency_previous_14day_std",
+                "sleep_efficiency_previous_7day_std",
+            ],
+        )
+
+        stress_anomaly = _anomaly(
+            stress,
+            stress_personal_baseline,
+            stress_personal_std,
+            _population_baselines.get("stress_score"),
+            None,
+            _anomaly_threshold,
+        )
+        sleep_anomaly = _anomaly(
+            sleep,
+            sleep_base,
+            sleep_personal_std,
+            _population_baselines.get("sleep_efficiency_next_night"),
+            None,
+            _anomaly_threshold,
+        )
 
         current = input_data.get("current") or {}
         current_daily = current.get("daily") or {}
@@ -160,6 +268,13 @@ def run(raw_data):
                     "stress_score": stress,
                     "sleep_efficiency_next_night": sleep,
                 },
+                "anomaly_detection": {
+                    "method": "absolute_z_score",
+                    "threshold": _anomaly_threshold,
+                    "stress_score": stress_anomaly,
+                    "sleep_efficiency_next_night": sleep_anomaly,
+                },
+                "selected_winner_models": _metadata.get("winners", {}),
                 "sleep_prediction_details": {
                     "personal_sleep_baseline": sleep_base,
                     "predicted_change_from_baseline": sleep_delta,

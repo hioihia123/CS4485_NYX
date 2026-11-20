@@ -509,6 +509,23 @@ def main():
         "sleep_training_target": "next_night_sleep_efficiency_minus_personal_sleep_baseline",
         "sleep_prediction_rule": "personal_sleep_baseline_plus_predicted_delta, clipped to 0-100",
         "sleep_feature_selection": "VarianceThreshold then SelectKBest(f_regression, k=60) inside each training fold",
+        "anomaly_detection": {
+            "method": "absolute_z_score",
+            "threshold": 2.0,
+            "directions": ["low", "normal", "high"],
+        },
+        "population_baselines": {
+            "stress_score": {
+                "mean": float(df["survey_stress_target"].dropna().mean()),
+                "std": float(df["survey_stress_target"].dropna().std(ddof=0)),
+                "count": int(df["survey_stress_target"].notna().sum()),
+            },
+            "sleep_efficiency_next_night": {
+                "mean": float(df["sleep_target"].dropna().mean()),
+                "std": float(df["sleep_target"].dropna().std(ddof=0)),
+                "count": int(df["sleep_target"].notna().sum()),
+            },
+        },
         "stress_feature_set": STRESS_FEATURES,
         "sleep_feature_set_before_selection": SLEEP_FEATURES,
         "feature_counts": {
