@@ -10,7 +10,7 @@ namespace NyxInsightsWeb.Services
         private readonly IConfiguration _configuration;
 
         private const string RedirectUri =
-            "https://localhost:7135/googlehealth/callback";
+            "https://localhost:7157/googlehealth/callback";
 
         private readonly string[] _scopes =
         {

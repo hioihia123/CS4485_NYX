@@ -200,10 +200,6 @@
         display: none;
     }
 
-    /* ============================================================
-       CURRENT RESULT CARDS
-       ============================================================ */
-
     .nyx-score-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -243,10 +239,6 @@
         overflow-wrap: anywhere;
     }
 
-    /* ============================================================
-       ANALYTICS KPI CARDS
-       ============================================================ */
-
     .nyx-kpi-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -282,10 +274,6 @@
         color: var(--nyx-muted);
         font-size: 12px;
     }
-
-    /* ============================================================
-       CHARTS
-       ============================================================ */
 
     .nyx-chart-grid {
         display: grid;
@@ -345,10 +333,6 @@
         height: 360px;
     }
 
-    /* ============================================================
-       HISTORY TABLE
-       ============================================================ */
-
     .nyx-table-wrap {
         overflow-x: auto;
         border: 1px solid var(--nyx-border);
@@ -385,10 +369,6 @@
     .history-table tbody tr:hover {
         background: #fafbfe;
     }
-
-    /* ============================================================
-       MODEL PERFORMANCE
-       ============================================================ */
 
     .performance-table {
         width: 100%;
@@ -457,14 +437,342 @@
             font-size: 27px;
         }
     }
+
+    .nyx-input-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .nyx-mode-tab {
+        border: 1px solid var(--nyx-border);
+        border-radius: 10px;
+        background: var(--nyx-card);
+        color: var(--nyx-muted);
+        padding: 12px 20px;
+        font: inherit;
+        font-weight: 650;
+        cursor: pointer;
+    }
+
+    .nyx-mode-tab:hover {
+        background: #f1f4ff;
+    }
+
+    .nyx-mode-tab[aria-selected="true"] {
+        background: var(--nyx-primary);
+        border-color: var(--nyx-primary);
+        color: #fff;
+    }
+
+    .nyx-mode-tab:focus-visible,
+    .nyx-google-connect:focus-visible {
+        outline: 3px solid #93c5fd;
+        outline-offset: 3px;
+    }
+
+    #nyx-manual-panel[hidden],
+    #nyx-google-panel[hidden] {
+        display: none !important;
+    }
+
+    .nyx-google-info {
+        margin-top: 22px;
+        padding: 18px 20px;
+        border: 1px solid var(--nyx-border);
+        border-radius: 12px;
+        background: #f8faff;
+    }
+
+    .nyx-google-info h3 {
+        margin: 0 0 12px;
+        font-size: 16px;
+    }
+
+    .nyx-google-info ol {
+        margin: 0;
+        padding-left: 21px;
+        color: var(--nyx-muted);
+        line-height: 1.8;
+    }
+
+    .nyx-google-connect {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        min-height: 50px;
+        padding: 12px 20px;
+        background: #ffffff;
+        border: 1px solid #dadce0;
+        border-radius: 10px;
+        color: #202124;
+        font-size: 15px;
+        font-weight: 650;
+        line-height: 1.2;
+        text-decoration: none;
+        box-shadow: 0 2px 5px rgba(23, 32, 51, 0.07);
+    }
+
+    .nyx-google-connect svg {
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+    }
+
+    .nyx-google-connect:hover {
+        background: #f8faff;
+        border-color: #b9c5e0;
+        color: #202124;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(23, 32, 51, 0.10);
+    }
+
+    .nyx-google-connect:active {
+        transform: translateY(0);
+    }
+
+    .nyx-google-note {
+        margin-top: 18px;
+        font-size: 13px;
+    }
+
+    .nyx-google-status {
+        margin-top: 22px;
+        padding: 13px 16px;
+        border: 1px solid var(--nyx-border);
+        border-radius: 10px;
+        background: #f8faff;
+        color: var(--nyx-muted);
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .nyx-google-status.is-connected {
+        background: #effaf5;
+        border-color: #b9e3d0;
+        color: #166b4d;
+    }
+
+    .nyx-google-actions[hidden] {
+        display: none !important;
+    }
+
+    .nyx-sync-card {
+        margin-top: 24px;
+        padding: 22px;
+        border-radius: 16px;
+        border: 1px solid #dbe3f5;
+        background: linear-gradient(150deg, #ffffff 0%, #f6f8ff 100%);
+    }
+
+    .nyx-sync-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .nyx-sync-symbol {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 44px;
+        width: 44px;
+        border-radius: 13px;
+        background: #e9eeff;
+        color: #405ad1;
+    }
+
+    .nyx-sync-heading h3 {
+        font-size: 17px;
+        margin: 0;
+        font-weight: 750;
+    }
+
+    .nyx-sync-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        align-items: end;
+    }
+
+    .nyx-sync-date {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 0 0 auto;
+    }
+
+    .nyx-sync-date label {
+        font-size: 13px;
+        font-weight: 650;
+        color: #43516a;
+    }
+
+    .nyx-sync-date input {
+        border: 1px solid #cfd8ea;
+        border-radius: 10px;
+        padding: 12px 13px;
+        font: inherit;
+        font-size: 14px;
+        background: white;
+        color: #172033;
+    }
+
+    .nyx-sync-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 48px;
+        padding: 12px 21px;
+        border: 1px solid rgba(79, 103, 217, 0.46);
+        border-radius: 12px;
+        background: rgba(79, 103, 217, 0.045);
+        color: #3c55bd;
+        font: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.2;
+        cursor: pointer;
+        box-shadow: 0 3px 12px rgba(41, 62, 145, 0.06);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        transition: background 0.2s ease, border-color 0.2s ease,
+                    color 0.2s ease, box-shadow 0.2s ease,
+                    transform 0.2s ease;
+    }
+
+    .nyx-sync-button svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+    .nyx-sync-button:hover:not(:disabled) {
+        background: rgba(79, 103, 217, 0.14);
+        border-color: #5870d7;
+        color: #3048b3;
+        box-shadow: 0 8px 22px rgba(61, 81, 173, 0.13);
+        transform: translateY(-1px);
+    }
+
+    .nyx-sync-button:active:not(:disabled) {
+        background: rgba(79, 103, 217, 0.20);
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(61, 81, 173, 0.08);
+    }
+
+    .nyx-sync-button:disabled {
+        cursor: progress;
+        opacity: 0.68;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .nyx-sync-button:focus-visible,
+    .nyx-sync-date input:focus-visible {
+        outline: 3px solid rgba(79, 103, 217, 0.35);
+        outline-offset: 3px;
+    }
+
+    .nyx-sync-button.is-loading svg {
+        animation: nyx-spin 0.9s linear infinite;
+    }
+
+    @@keyframes nyx-spin {
+        to { transform: rotate(360deg); }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        .nyx-sync-button {
+            transition: none;
+        }
+
+        .nyx-sync-button.is-loading svg {
+            animation: none;
+        }
+    }
+
+    .nyx-sync-feedback {
+        margin-top: 16px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.6;
+        background: #ecf2ff;
+        color: #334a91;
+    }
+
+    .nyx-sync-feedback.is-error {
+        background: #fff4f2;
+        color: #a3291b;
+    }
+
+    .nyx-sync-results {
+        border-top: 1px solid #e3e8f3;
+        margin-top: 19px;
+        padding-top: 17px;
+    }
+
+    .nyx-sync-summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin: 12px 0 18px;
+    }
+
+    .nyx-sync-stat {
+        padding: 14px;
+        border: 1px solid #e1e7f4;
+        border-radius: 11px;
+        background: #fff;
+    }
+
+    .nyx-sync-stat strong {
+        display: block;
+        font-size: 21px;
+        color: #304a9c;
+        margin-top: 6px;
+    }
+
+    .nyx-sync-table-wrap {
+        max-height: 300px;
+        overflow: auto;
+        border: 1px solid #e1e7f4;
+        border-radius: 11px;
+        background: #fff;
+    }
+
+    .nyx-sync-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    .nyx-sync-table th,
+    .nyx-sync-table td {
+        text-align: left;
+        border-bottom: 1px solid #eef1f7;
+        padding: 11px 14px;
+    }
+
+    .nyx-sync-table th {
+        background: #f8faff;
+        position: sticky;
+        top: 0;
+    }
+
+    @@media (max-width: 600px) {
+        .nyx-sync-controls { align-items: stretch; }
+        .nyx-sync-date, .nyx-sync-button { width: 100%; }
+        .nyx-sync-summary { grid-template-columns: 1fr; }
+    }
 </style>
 
-
 <div class="nyx-dashboard">
-
-    <!-- =========================================================
-         HEADER
-         ========================================================= -->
 
     <header class="nyx-header">
 
@@ -479,12 +787,19 @@
 
     </header>
 
+    <div class="nyx-input-tabs" role="tablist" aria-label="Health input method">
+        <button type="button" id="nyx-manual-tab" class="nyx-mode-tab"
+                role="tab" aria-selected="true" aria-controls="nyx-manual-panel">
+            Manual Entry
+        </button>
+        <button type="button" id="nyx-google-tab" class="nyx-mode-tab"
+                role="tab" aria-selected="false" aria-controls="nyx-google-panel" tabindex="-1">
+            Google Health
+        </button>
+    </div>
 
-    <!-- =========================================================
-         INPUT FORM
-         ========================================================= -->
-
-    <section class="nyx-card">
+    <section class="nyx-card" id="nyx-manual-panel" role="tabpanel"
+             aria-labelledby="nyx-manual-tab" tabindex="0">
 
         <h2>Analyze Your Health Data</h2>
 
@@ -493,17 +808,12 @@
             Your analysis will automatically be saved to your account.
         </p>
 
-
         <form id="predictionForm"
               onsubmit="return false;">
-
-
-            <!-- HEART / WELLNESS -->
 
             <div class="nyx-section-title">
                 Heart Rate & Wellness
             </div>
-
 
             <div class="nyx-form-grid">
 
@@ -526,7 +836,6 @@
 
                 </div>
 
-
                 <div class="nyx-field">
 
                     <label for="mindfulness_session">
@@ -542,7 +851,6 @@
                            required />
 
                 </div>
-
 
                 <div class="nyx-field">
 
@@ -565,13 +873,9 @@
 
             </div>
 
-
-            <!-- ACTIVITY -->
-
             <div class="nyx-section-title">
                 Daily Activity
             </div>
-
 
             <div class="nyx-form-grid">
 
@@ -590,7 +894,6 @@
 
                 </div>
 
-
                 <div class="nyx-field">
 
                     <label>
@@ -605,7 +908,6 @@
                            required />
 
                 </div>
-
 
                 <div class="nyx-field">
 
@@ -622,7 +924,6 @@
 
                 </div>
 
-
                 <div class="nyx-field">
 
                     <label>
@@ -638,7 +939,6 @@
 
                 </div>
 
-
                 <div class="nyx-field">
 
                     <label>
@@ -653,7 +953,6 @@
                            required />
 
                 </div>
-
 
                 <div class="nyx-field">
 
@@ -672,13 +971,9 @@
 
             </div>
 
-
-            <!-- HR ZONES -->
-
             <div class="nyx-section-title">
                 Heart Rate Zones
             </div>
-
 
             <div class="nyx-form-grid">
 
@@ -697,7 +992,6 @@
 
                 </div>
 
-
                 <div class="nyx-field">
 
                     <label>
@@ -712,7 +1006,6 @@
                            required />
 
                 </div>
-
 
                 <div class="nyx-field">
 
@@ -731,7 +1024,6 @@
 
             </div>
 
-
             <div class="nyx-warning">
 
                 <strong>Experimental model:</strong>
@@ -740,14 +1032,7 @@
 
             </div>
 
-
             <div class="nyx-actions">
-
-                <!--
-                    IMPORTANT:
-                    type="button" prevents browser form submission
-                    and therefore prevents page reload.
-                -->
 
                 <button id="analyzeButton"
                         type="button"
@@ -756,7 +1041,6 @@
                     Analyze My Health Data
 
                 </button>
-
 
                 <span id="loadingMessage"
                       class="nyx-muted"
@@ -768,11 +1052,9 @@
 
             </div>
 
-
             <div id="errorMessage"
                  class="nyx-error">
             </div>
-
 
             <div id="saveMessage"
                  class="nyx-success">
@@ -782,14 +1064,98 @@
 
     </section>
 
+    <section class="nyx-card nyx-google-panel" id="nyx-google-panel" role="tabpanel"
+             aria-labelledby="nyx-google-tab" tabindex="0" hidden>
+        <h2>Google Health</h2>
 
-    <!-- =========================================================
-         CURRENT PREDICTION
-         ========================================================= -->
+        <div class="nyx-google-info">
+            <h3>How it works</h3>
+            <ol>
+                <li>Connect your Google account and approve access to your health data.</li>
+                <li>Nyx saves the authorized connection to your account.</li>
+                <li>Use the sync button to retrieve available step records.</li>
+            </ol>
+        </div>
+
+        <div id="googleHealthStatus"
+             class="nyx-google-status"
+             role="status"
+             aria-live="polite">
+            Check your connection by opening this tab.
+        </div>
+
+        <div id="googleHealthConnectActions" class="nyx-actions nyx-google-actions" hidden>
+            <a id="googleHealthConnectLink"
+               class="nyx-button nyx-google-connect"
+               href="/googlehealth/connect"
+               aria-label="Connect Google Health with your Google account">
+                <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"
+                     aria-hidden="true" focusable="false">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.27 5.48-4.77 7.18l7.73 6C44.37 38.06 46.98 31.91 46.98 24.55z" />
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.46-.76-3.01-.76-4.59s.27-3.13.76-4.59l-7.98-6.2A23.94 23.94 0 0 0 0 24c0 3.87.93 7.54 2.56 10.78l7.97-6.19z" />
+                    <path fill="#34A853" d="M24 48c6.48 0 11.92-2.13 15.9-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.17 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+                </svg>
+                <span>Connect with Google</span>
+            </a>
+        </div>
+
+        <div id="googleHealthSyncPanel" class="nyx-sync-card" hidden>
+            <div class="nyx-sync-heading">
+                <span class="nyx-sync-symbol" aria-hidden="true">
+                    <svg width="23" height="23" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M20 16.5v2.2A2.3 2.3 0 0 1 17.7 21H6.3A2.3 2.3 0 0 1 4 18.7v-2.2"/>
+                        <path d="M12 3v13m0 0-4.5-4.5M12 16l4.5-4.5"/>
+                    </svg>
+                </span>
+                <h3>Sync Google Health data</h3>
+            </div>
+
+            @Html.AntiForgeryToken()
+
+            <div class="nyx-sync-controls">
+                <div class="nyx-sync-date">
+                    <label for="googleSyncEndDate">History ending on</label>
+                    <input id="googleSyncEndDate" type="date" />
+                </div>
+                <button id="googleSyncButton" type="button" class="nyx-sync-button">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M20 11a8 8 0 0 0-14-5L4 8"/>
+                        <path d="M4 4v4h4"/>
+                        <path d="M4 13a8 8 0 0 0 14 5l2-2"/>
+                        <path d="M20 20v-4h-4"/>
+                    </svg>
+                    <span id="googleSyncButtonLabel">Sync Health Data</span>
+                </button>
+            </div>
+
+            <div id="googleSyncFeedback" class="nyx-sync-feedback" role="status"
+                 aria-live="polite" hidden></div>
+
+            <div id="googleSyncResults" class="nyx-sync-results" hidden>
+                <h3 style="font-size:16px; margin:0">Retrieved step records</h3>
+                <div class="nyx-sync-summary">
+                    <div class="nyx-sync-stat">Days with data<strong id="googleDaysWithData">—</strong></div>
+                    <div class="nyx-sync-stat">Latest steps<strong id="googleLatestSteps">—</strong></div>
+                    <div class="nyx-sync-stat">Recorded total<strong id="googleTotalSteps">—</strong></div>
+                </div>
+                <div class="nyx-sync-table-wrap">
+                    <table class="nyx-sync-table">
+                        <thead><tr><th>Date</th><th>Steps</th></tr></thead>
+                        <tbody id="googleSyncRows"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </section>
 
     <section id="resultsSection"
              class="nyx-results">
-
 
         <div class="nyx-card">
 
@@ -798,7 +1164,6 @@
             <p class="nyx-muted">
                 Latest model output from the health data you submitted.
             </p>
-
 
             <div class="nyx-score-grid">
 
@@ -816,7 +1181,6 @@
                     </div>
 
                 </div>
-
 
                 <div class="nyx-score">
 
@@ -837,7 +1201,6 @@
 
         </div>
 
-
         <div class="nyx-card">
 
             <h2>AI Health Data Analysis</h2>
@@ -847,13 +1210,11 @@
                 Nyx AI explanation service.
             </p>
 
-
             <div id="explanation"
                  class="nyx-explanation">
             </div>
 
         </div>
-
 
         <div class="nyx-card">
 
@@ -863,7 +1224,6 @@
                 Evaluation metrics for the current prediction models.
             </p>
 
-
             <div id="performanceMetrics">
             </div>
 
@@ -871,20 +1231,11 @@
 
     </section>
 
-
-    <!-- =========================================================
-         TREND DASHBOARD
-         ========================================================= -->
-
     <section id="trendsSection"
              class="nyx-card"
              style="display: none;">
 
-
         <h2>Health Trends</h2>
-
-
-        <!-- KPI CARDS -->
 
         <div class="nyx-kpi-grid">
 
@@ -907,7 +1258,6 @@
 
             </div>
 
-
             <div class="nyx-kpi">
 
                 <div class="nyx-kpi-label">
@@ -927,7 +1277,6 @@
 
             </div>
 
-
             <div class="nyx-kpi">
 
                 <div class="nyx-kpi-label">
@@ -946,7 +1295,6 @@
                 </div>
 
             </div>
-
 
             <div class="nyx-kpi">
 
@@ -997,12 +1345,7 @@
 
 </div>
 
-        <!-- CHART GRID -->
-
         <div class="nyx-chart-grid">
-
-
-            <!-- STRESS -->
 
             <div class="nyx-chart-card">
 
@@ -1016,13 +1359,11 @@
 
                     </div>
 
-
                     <span class="nyx-chart-badge">
                         ML Prediction
                     </span>
 
                 </div>
-
 
                 <div class="nyx-chart-container">
 
@@ -1032,9 +1373,6 @@
                 </div>
 
             </div>
-
-
-            <!-- SLEEP -->
 
             <div class="nyx-chart-card">
 
@@ -1046,16 +1384,13 @@
                             Sleep Efficiency
                         </h3>
 
-
                     </div>
-
 
                     <span class="nyx-chart-badge">
                         Percentage
                     </span>
 
                 </div>
-
 
                 <div class="nyx-chart-container">
 
@@ -1065,9 +1400,6 @@
                 </div>
 
             </div>
-
-
-            <!-- ACTIVITY -->
 
             <div class="nyx-chart-card nyx-chart-card-wide">
 
@@ -1081,13 +1413,11 @@
 
                     </div>
 
-
                     <span class="nyx-chart-badge">
                         Wearable Data
                     </span>
 
                 </div>
-
 
                 <div class="nyx-chart-container">
 
@@ -1102,11 +1432,6 @@
 
     </section>
 
-
-    <!-- =========================================================
-         HISTORY TABLE
-         ========================================================= -->
-
     <section class="nyx-card">
 
         <h2>Prediction History</h2>
@@ -1119,11 +1444,9 @@
 
         </div>
 
-
         <div id="historyTableWrap"
              class="nyx-table-wrap"
              hidden>
-
 
             <table id="historyTable"
                    class="history-table">
@@ -1141,7 +1464,6 @@
 
                 </thead>
 
-
                 <tbody id="historyBody">
                 </tbody>
 
@@ -1153,82 +1475,265 @@
 
 </div>
 
-
-<!-- ============================================================
-     CHART.JS
-     ============================================================ -->
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-
 <script>
+    const manualTab = document.getElementById("nyx-manual-tab");
+    const googleTab = document.getElementById("nyx-google-tab");
+    const manualPanel = document.getElementById("nyx-manual-panel");
+    const googlePanel = document.getElementById("nyx-google-panel");
+
+    function selectHealthInput(mode) {
+        const googleSelected = mode === "google";
+        manualPanel.hidden = googleSelected;
+        googlePanel.hidden = !googleSelected;
+        manualTab.setAttribute("aria-selected", String(!googleSelected));
+        googleTab.setAttribute("aria-selected", String(googleSelected));
+        manualTab.tabIndex = googleSelected ? -1 : 0;
+        googleTab.tabIndex = googleSelected ? 0 : -1;
+
+        if (googleSelected) {
+            loadGoogleHealthStatus();
+        }
+    }
+
+    async function loadGoogleHealthStatus() {
+        const status = document.getElementById("googleHealthStatus");
+        const actions = document.getElementById("googleHealthConnectActions");
+        const syncPanel = document.getElementById("googleHealthSyncPanel");
+        const link = document.getElementById("googleHealthConnectLink");
+        const label = link ? link.querySelector("span") : null;
+
+        if (!status || !actions || !link || !label) return;
+
+        status.hidden = false;
+        status.classList.remove("is-connected");
+        status.textContent = "Checking Google Health connection...";
+        actions.hidden = true;
+        if (syncPanel) syncPanel.hidden = true;
+
+        try {
+            const response = await fetch("/googlehealth/status", {
+                method: "GET",
+                credentials: "same-origin",
+                cache: "no-store",
+                headers: {
+                    "Accept": "application/json",
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+
+            if (response.status === 401 || response.redirected) {
+                status.textContent = "Please sign in to your NYX account first.";
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(`Connection status request failed (${response.status}).`);
+            }
+
+            const data = await response.json();
+
+            if (data.connected) {
+                status.classList.add("is-connected");
+                if (syncPanel) syncPanel.hidden = false;
+                status.textContent = data.accessTokenExpired
+                    ? "Google Health connected. Your access token will be renewed automatically when you request health data."
+                    : "Google Health connected";
+                return;
+            }
+
+            status.textContent = data.needsReconnect
+                ? "Your previous Google Health authorization needs to be renewed."
+                : "Google Health is not connected to this NYX account yet.";
+
+            label.textContent = data.needsReconnect
+                ? "Reconnect with Google"
+                : "Connect with Google";
+
+            actions.hidden = false;
+        } catch (error) {
+            console.error("Google Health status check failed:", error);
+            status.textContent = "Unable to check Google Health connection. Refresh the page and try again.";
+        }
+    }
+
+    const googleSyncButton = document.getElementById("googleSyncButton");
+    const googleSyncDate = document.getElementById("googleSyncEndDate");
+    const googleSyncFeedback = document.getElementById("googleSyncFeedback");
+    const googleSyncResults = document.getElementById("googleSyncResults");
+
+    function currentLocalDate() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    }
+
+    if (googleSyncDate) {
+        googleSyncDate.value = currentLocalDate();
+        googleSyncDate.max = currentLocalDate();
+    }
+
+    async function syncGoogleSteps() {
+        if (!googleSyncButton || !googleSyncDate || !googleSyncFeedback || !googleSyncResults)
+            return;
+
+        const date = googleSyncDate.value;
+        if (!date || date > currentLocalDate()) {
+            googleSyncFeedback.hidden = false;
+            googleSyncFeedback.classList.add("is-error");
+            googleSyncFeedback.textContent = "Select a valid date that is not in the future.";
+            return;
+        }
+
+        const csrfToken = document.querySelector(
+            '#googleHealthSyncPanel input[name="__RequestVerificationToken"]');
+        if (!csrfToken) {
+            googleSyncFeedback.hidden = false;
+            googleSyncFeedback.classList.add("is-error");
+            googleSyncFeedback.textContent = "Security token missing. Reload the dashboard and retry.";
+            return;
+        }
+
+        googleSyncButton.disabled = true;
+        googleSyncButton.classList.add("is-loading");
+        document.getElementById("googleSyncButtonLabel").textContent = "Syncing...";
+        googleSyncResults.hidden = true;
+        googleSyncFeedback.hidden = false;
+        googleSyncFeedback.classList.remove("is-error");
+        googleSyncFeedback.textContent = "Retrieving available records from Google Health...";
+
+        try {
+            const response = await fetch(
+                `/googlehealth/sync-steps?endDate=${encodeURIComponent(date)}`, {
+                method: "POST",
+                credentials: "same-origin",
+                cache: "no-store",
+                headers: {
+                    "Accept": "application/json",
+                    "RequestVerificationToken": csrfToken.value
+                }
+            });
+            const raw = await response.text();
+            let data;
+            try { data = JSON.parse(raw); } catch { data = null; }
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    await loadGoogleHealthStatus();
+                    throw new Error("Your Google Health authorization needs renewal. Reconnect with Google.");
+                }
+                throw new Error((data && data.error) ||
+                    `Google Health synchronization failed (HTTP ${response.status}).`);
+            }
+            if (!data || !Array.isArray(data.history))
+                throw new Error("Unexpected response from the synchronization endpoint.");
+
+            document.getElementById("googleDaysWithData").textContent =
+                `${data.daysWithData} / ${data.daysRequested}`;
+            document.getElementById("googleLatestSteps").textContent =
+                data.latestSteps == null ? "No data" :
+                Number(data.latestSteps).toLocaleString();
+            document.getElementById("googleTotalSteps").textContent =
+                Number(data.totalSteps).toLocaleString();
+
+            const rows = document.getElementById("googleSyncRows");
+            rows.replaceChildren();
+            for (const item of [...data.history].reverse()) {
+                const tr = document.createElement("tr");
+                const dayCell = document.createElement("td");
+                const stepsCell = document.createElement("td");
+                dayCell.textContent = item.date;
+                stepsCell.textContent = Number(item.steps).toLocaleString();
+                tr.append(dayCell, stepsCell);
+                rows.appendChild(tr);
+            }
+            if (data.history.length === 0) {
+                const tr = document.createElement("tr");
+                const cell = document.createElement("td");
+                cell.colSpan = 2;
+                cell.textContent = "No step measurements were returned for this date range.";
+                tr.appendChild(cell);
+                rows.appendChild(tr);
+            }
+
+            googleSyncFeedback.textContent =
+                `Sync complete. ${data.daysWithData} day(s) contained step records; ` +
+                `${data.missingDates.length} day(s) had no available records.`;
+            googleSyncResults.hidden = false;
+            await loadGoogleHealthStatus();
+        } catch (error) {
+            googleSyncFeedback.classList.add("is-error");
+            googleSyncFeedback.textContent = error.message || "Synchronization failed.";
+        } finally {
+            googleSyncButton.disabled = false;
+            googleSyncButton.classList.remove("is-loading");
+            document.getElementById("googleSyncButtonLabel").textContent = "Sync Health Data";
+        }
+    }
+
+    if (googleSyncButton) googleSyncButton.addEventListener("click", syncGoogleSteps);
+
+    if (manualTab && googleTab && manualPanel && googlePanel) {
+        manualTab.addEventListener("click", () => selectHealthInput("manual"));
+        googleTab.addEventListener("click", () => selectHealthInput("google"));
+        [manualTab, googleTab].forEach(tab => {
+            tab.addEventListener("keydown", event => {
+                if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+                event.preventDefault();
+                const nextTab = tab === manualTab ? googleTab : manualTab;
+                selectHealthInput(nextTab === googleTab ? "google" : "manual");
+                nextTab.focus();
+            });
+        });
+        selectHealthInput("manual");
+    }
 
     console.log(
         "NYX dashboard JavaScript loaded."
     );
 
-
-    // ============================================================
-    // DOM ELEMENTS
-    // ============================================================
-
     const predictionForm =
         document.getElementById(
             "predictionForm");
-
 
     const analyzeButton =
         document.getElementById(
             "analyzeButton");
 
-
     const loadingMessage =
         document.getElementById(
             "loadingMessage");
-
 
     const errorMessage =
         document.getElementById(
             "errorMessage");
 
-
     const saveMessage =
         document.getElementById(
             "saveMessage");
-
 
     const resultsSection =
         document.getElementById(
             "resultsSection");
 
-
     const trendsSection =
         document.getElementById(
             "trendsSection");
 
-
-    // ============================================================
-    // CHART REFERENCES
     //
     // Stored so old Chart.js instances can be destroyed before
     // rebuilding after another prediction.
-    // ============================================================
-
     let stressChart =
         null;
-
 
     let sleepChart =
         null;
 
-
     let activityChart =
         null;
-
-
-    // ============================================================
-    // PREVENT NORMAL HTML FORM SUBMISSION
-    // ============================================================
 
     predictionForm.addEventListener(
         "submit",
@@ -1239,29 +1744,20 @@
             return false;
         });
 
-
     analyzeButton.addEventListener(
         "click",
         analyzeHealthData);
-
-
-    // ============================================================
-    // ANALYZE HEALTH DATA
-    // ============================================================
 
     async function analyzeHealthData()
     {
         errorMessage.style.display =
             "none";
 
-
         saveMessage.style.display =
             "none";
 
-
         resultsSection.style.display =
             "none";
-
 
         // Browser built-in required-field validation.
 
@@ -1270,40 +1766,30 @@
             return;
         }
 
-
         analyzeButton.disabled =
             true;
-
 
         analyzeButton.textContent =
             "Analyzing...";
 
-
         loadingMessage.hidden =
             false;
 
-
         try
         {
-            // ----------------------------------------------------
             // Convert form inputs into JSON numeric features.
-            // ----------------------------------------------------
-
             const formData =
                 new FormData(
                     predictionForm);
 
-
             const features =
                 {};
-
 
             for (const [name, value]
                 of formData.entries())
             {
                 const numericValue =
                     Number(value);
-
 
                 if (!Number.isFinite(
                         numericValue))
@@ -1312,25 +1798,19 @@
                         `Invalid value entered for ${name}.`);
                 }
 
-
                 features[name] =
                     numericValue;
             }
-
 
             console.log(
                 "Prediction request:",
                 features);
 
-
-            // ----------------------------------------------------
             // ASP.NET endpoint:
             //
             // Azure ML
             // → Foundry
             // → PostgreSQL
-            // ----------------------------------------------------
-
             const response =
                 await fetch(
                     "/api/predictions/predict-and-explain",
@@ -1349,23 +1829,18 @@
                                 features)
                     });
 
-
             const responseText =
                 await response.text();
-
 
             console.log(
                 "Prediction status:",
                 response.status);
 
-
             console.log(
                 "Prediction response:",
                 responseText);
 
-
             let data;
-
 
             try
             {
@@ -1379,7 +1854,6 @@
                     "The server returned an invalid response.");
             }
 
-
             if (!response.ok)
             {
                 throw new Error(
@@ -1387,14 +1861,9 @@
                     "Prediction request failed.");
             }
 
-
-            // ----------------------------------------------------
             // Extract prediction
-            // ----------------------------------------------------
-
             const predictionResult =
                 data.predictionResult;
-
 
             if (!predictionResult)
             {
@@ -1402,21 +1871,14 @@
                     "Prediction result was missing.");
             }
 
-
             const predictions =
                 predictionResult.predictions;
-
 
             if (!predictions)
             {
                 throw new Error(
                     "Prediction values were missing.");
             }
-
-
-            // ----------------------------------------------------
-            // DISPLAY CURRENT PREDICTION
-            // ----------------------------------------------------
 
             document
                 .getElementById(
@@ -1426,7 +1888,6 @@
                 Number(
                     predictions.stress_score
                 ).toFixed(2);
-
 
             document
                 .getElementById(
@@ -1438,7 +1899,6 @@
                         .sleep_efficiency_next_night
                 ).toFixed(2) + "%";
 
-
             document
                 .getElementById(
                     "explanation")
@@ -1447,36 +1907,22 @@
                 data.explanation ??
                 "No explanation was returned.";
 
-
             displayPerformance(
                 predictionResult
                     .model_performance);
 
-
             resultsSection.style.display =
                 "block";
-
-
-            // ----------------------------------------------------
-            // DATABASE SAVE CONFIRMATION
-            // ----------------------------------------------------
 
             saveMessage.textContent =
                 `Prediction saved successfully. ` +
                 `History ID: ${data.predictionId}`;
 
-
             saveMessage.style.display =
                 "block";
 
-
-            // ----------------------------------------------------
-            // IMPORTANT:
             // Reload database history and refresh all charts.
-            // ----------------------------------------------------
-
             await loadHistory();
-
 
             resultsSection.scrollIntoView(
                 {
@@ -1493,11 +1939,9 @@
                 "NYX prediction error:",
                 error);
 
-
             errorMessage.textContent =
                 error.message ??
                 "Something went wrong.";
-
 
             errorMessage.style.display =
                 "block";
@@ -1507,20 +1951,13 @@
             analyzeButton.disabled =
                 false;
 
-
             analyzeButton.textContent =
                 "Analyze My Health Data";
-
 
             loadingMessage.hidden =
                 true;
         }
     }
-
-
-    // ============================================================
-    // LOAD SAVED HISTORY
-    // ============================================================
 
     async function loadHistory()
     {
@@ -1528,20 +1965,16 @@
             document.getElementById(
                 "historyStatus");
 
-
         const historyTableWrap =
             document.getElementById(
                 "historyTableWrap");
-
 
         const historyBody =
             document.getElementById(
                 "historyBody");
 
-
         historyStatus.textContent =
             "Loading prediction history...";
-
 
         try
         {
@@ -1559,20 +1992,16 @@
                         }
                     });
 
-
             const responseText =
                 await response.text();
-
 
             console.log(
                 "History HTTP status:",
                 response.status);
 
-
             console.log(
                 "History response:",
                 responseText);
-
 
             if (!response.ok)
             {
@@ -1580,18 +2009,11 @@
                     `History request failed: HTTP ${response.status}`);
             }
 
-
             const history =
                 JSON.parse(
                     responseText);
 
-
             historyBody.replaceChildren();
-
-
-            // ----------------------------------------------------
-            // NO HISTORY
-            // ----------------------------------------------------
 
             if (!history ||
                 history.length === 0)
@@ -1599,33 +2021,22 @@
                 historyStatus.textContent =
                     "No saved predictions yet.";
 
-
                 historyTableWrap.hidden =
                     true;
-
 
                 trendsSection.style.display =
                     "none";
 
-
                 destroyCharts();
-
 
                 return;
             }
 
-
-            // ----------------------------------------------------
-            // HISTORY EXISTS
-            // ----------------------------------------------------
-
             historyStatus.textContent =
                 `${history.length} saved prediction(s)`;
 
-
             historyTableWrap.hidden =
                 false;
-
 
             // History endpoint currently returns newest first.
 
@@ -1635,30 +2046,25 @@
                     document.createElement(
                         "tr");
 
-
                 appendCell(
                     row,
                     formatTableDate(
                         item.createdAt));
-
 
                 appendCell(
                     row,
                     formatWholeNumber(
                         item.bpm));
 
-
                 appendCell(
                     row,
                     formatWholeNumber(
                         item.steps));
 
-
                 appendCell(
                     row,
                     formatWholeNumber(
                         item.calories));
-
 
                 appendCell(
                     row,
@@ -1666,22 +2072,15 @@
                         item.stressScore
                     ).toFixed(2));
 
-
                 appendCell(
                     row,
                     Number(
                         item.sleepEfficiencyNextNight
                     ).toFixed(2) + "%");
 
-
                 historyBody.appendChild(
                     row);
             }
-
-
-            // ----------------------------------------------------
-            // BUILD ANALYTICS DASHBOARD
-            // ----------------------------------------------------
 
             renderTrendCharts(
                 history);
@@ -1692,24 +2091,16 @@
                 "History error:",
                 error);
 
-
             historyStatus.textContent =
                 "Could not load prediction history.";
 
-
             historyTableWrap.hidden =
                 true;
-
 
             trendsSection.style.display =
                 "none";
         }
     }
-
-
-    // ============================================================
-    // RENDER MODERN CHARTS
-    // ============================================================
 
     function renderTrendCharts(history)
     {
@@ -1722,7 +2113,6 @@
             return;
         }
 
-
         if (typeof Chart === "undefined")
         {
             console.error(
@@ -1731,19 +2121,14 @@
             return;
         }
 
-
         trendsSection.style.display =
             "block";
 
-
-        // --------------------------------------------------------
         // Database returns newest first.
         //
         // Charts should visually move:
         //
-        // OLD → NEW
-        // --------------------------------------------------------
-
+        // Oldest to newest
         const chronological =
             [...history].sort(
                 (a, b) =>
@@ -1753,7 +2138,6 @@
                         b.createdAt)
             );
 
-
         const latest =
             chronological[
                 chronological.length - 1];
@@ -1761,18 +2145,12 @@
         const latestAiExplanation =
  	    document.getElementById( "latestAiExplanation");
 
-
 	if (latest.aiExplanation && latest.aiExplanation.trim() !== ""){
     		latestAiExplanation.textContent = latest.aiExplanation;
 	}
 	else{
     		latestAiExplanation.textContent ="No AI explanation was saved for the latest prediction.";
 	}
-
-
-        // --------------------------------------------------------
-        // UPDATE KPI CARDS
-        // --------------------------------------------------------
 
         document
             .getElementById(
@@ -1783,7 +2161,6 @@
                 latest.stressScore
             ).toFixed(2);
 
-
         document
             .getElementById(
                 "latestSleep")
@@ -1792,7 +2169,6 @@
             Number(
                 latest.sleepEfficiencyNextNight
             ).toFixed(1) + "%";
-
 
         document
             .getElementById(
@@ -1803,7 +2179,6 @@
                 latest.steps
             ).toLocaleString();
 
-
         document
             .getElementById(
                 "latestBpm")
@@ -1813,18 +2188,12 @@
                 latest.bpm
             ).toFixed(0);
 
-
-        // --------------------------------------------------------
-        // CHART DATA
-        // --------------------------------------------------------
-
         const labels =
             chronological.map(
                 item =>
                     formatChartDate(
                         item.createdAt)
             );
-
 
         const stressValues =
             chronological.map(
@@ -1833,14 +2202,12 @@
                         item.stressScore)
             );
 
-
         const sleepValues =
             chronological.map(
                 item =>
                     Number(
                         item.sleepEfficiencyNextNight)
             );
-
 
         const stepValues =
             chronological.map(
@@ -1849,7 +2216,6 @@
                         item.steps)
             );
 
-
         const bpmValues =
             chronological.map(
                 item =>
@@ -1857,27 +2223,15 @@
                         item.bpm)
             );
 
-
-        // --------------------------------------------------------
-        // REMOVE OLD CHARTS
-        // --------------------------------------------------------
-
         destroyCharts();
-
-
-        // ========================================================
-        // STRESS CHART
-        // ========================================================
 
         const stressCanvas =
             document.getElementById(
                 "stressTrendChart");
 
-
         const stressContext =
             stressCanvas.getContext(
                 "2d");
-
 
         const stressGradient =
             stressContext
@@ -1887,16 +2241,13 @@
                     0,
                     320);
 
-
         stressGradient.addColorStop(
             0,
             "rgba(92, 107, 192, 0.30)");
 
-
         stressGradient.addColorStop(
             1,
             "rgba(92, 107, 192, 0.02)");
-
 
         stressChart =
             new Chart(
@@ -1957,20 +2308,13 @@
                             "Stress Score")
                 });
 
-
-        // ========================================================
-        // SLEEP CHART
-        // ========================================================
-
         const sleepCanvas =
             document.getElementById(
                 "sleepTrendChart");
 
-
         const sleepContext =
             sleepCanvas.getContext(
                 "2d");
-
 
         const sleepGradient =
             sleepContext
@@ -1980,16 +2324,13 @@
                     0,
                     320);
 
-
         sleepGradient.addColorStop(
             0,
             "rgba(44, 160, 133, 0.28)");
 
-
         sleepGradient.addColorStop(
             1,
             "rgba(44, 160, 133, 0.02)");
-
 
         sleepChart =
             new Chart(
@@ -2110,20 +2451,13 @@
                     }
                 });
 
-
-        // ========================================================
-        // STEPS + BPM CHART
-        // ========================================================
-
         const activityCanvas =
             document.getElementById(
                 "activityTrendChart");
 
-
         const activityContext =
             activityCanvas.getContext(
                 "2d");
-
 
         activityChart =
             new Chart(
@@ -2411,11 +2745,6 @@
                 });
     }
 
-
-    // ============================================================
-    // COMMON MODERN CHART OPTIONS
-    // ============================================================
-
     function createModernChartOptions(
         yAxisTitle)
     {
@@ -2560,7 +2889,6 @@
         };
     }
 
-
     function createXAxis()
     {
         return {
@@ -2596,11 +2924,6 @@
         };
     }
 
-
-    // ============================================================
-    // DESTROY OLD CHARTS
-    // ============================================================
-
     function destroyCharts()
     {
         if (stressChart)
@@ -2611,7 +2934,6 @@
                 null;
         }
 
-
         if (sleepChart)
         {
             sleepChart.destroy();
@@ -2619,7 +2941,6 @@
             sleepChart =
                 null;
         }
-
 
         if (activityChart)
         {
@@ -2630,11 +2951,6 @@
         }
     }
 
-
-    // ============================================================
-    // MODEL PERFORMANCE
-    // ============================================================
-
     function displayPerformance(
         performance)
     {
@@ -2642,9 +2958,7 @@
             document.getElementById(
                 "performanceMetrics");
 
-
         container.replaceChildren();
-
 
         if (!performance)
         {
@@ -2654,20 +2968,16 @@
             return;
         }
 
-
         const table =
             document.createElement(
                 "table");
 
-
         table.className =
             "performance-table";
-
 
         const header =
             document.createElement(
                 "tr");
-
 
         [
             "Metric",
@@ -2681,19 +2991,15 @@
                     document.createElement(
                         "th");
 
-
                 th.textContent =
                     label;
-
 
                 header.appendChild(
                     th);
             });
 
-
         table.appendChild(
             header);
-
 
         const rows =
         [
@@ -2718,7 +3024,6 @@
             ]
         ];
 
-
         for (const [label, key]
             of rows)
         {
@@ -2726,11 +3031,9 @@
                 document.createElement(
                     "tr");
 
-
             appendCell(
                 row,
                 label);
-
 
             appendCell(
                 row,
@@ -2738,27 +3041,19 @@
                     performance
                         .stress?.[key]));
 
-
             appendCell(
                 row,
                 formatMetric(
                     performance
                         .sleep?.[key]));
 
-
             table.appendChild(
                 row);
         }
 
-
         container.appendChild(
             table);
     }
-
-
-    // ============================================================
-    // HELPERS
-    // ============================================================
 
     function appendCell(
         row,
@@ -2768,15 +3063,12 @@
             document.createElement(
                 "td");
 
-
         cell.textContent =
             value;
-
 
         row.appendChild(
             cell);
     }
-
 
     function formatMetric(
         value)
@@ -2787,17 +3079,14 @@
             return "N/A";
         }
 
-
         if (typeof value === "number" &&
             !Number.isInteger(value))
         {
             return value.toFixed(3);
         }
 
-
         return String(value);
     }
-
 
     function formatWholeNumber(
         value)
@@ -2805,25 +3094,21 @@
         const number =
             Number(value);
 
-
         if (!Number.isFinite(number))
         {
             return "N/A";
         }
-
 
         return Math.round(
             number
         ).toLocaleString();
     }
 
-
     function formatChartDate(
         value)
     {
         const date =
             new Date(value);
-
 
         return date.toLocaleString(
             [],
@@ -2842,13 +3127,11 @@
             });
     }
 
-
     function formatTableDate(
         value)
     {
         const date =
             new Date(value);
-
 
         return date.toLocaleString(
             [],
@@ -2869,11 +3152,6 @@
                     "2-digit"
             });
     }
-
-
-    // ============================================================
-    // INITIAL PAGE LOAD
-    // ============================================================
 
     loadHistory();
 
