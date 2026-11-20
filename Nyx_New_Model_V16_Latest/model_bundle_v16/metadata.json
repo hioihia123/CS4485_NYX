@@ -95,6 +95,27 @@
   "sleep_training_target": "next_night_sleep_efficiency_minus_personal_sleep_baseline",
   "sleep_prediction_rule": "personal_sleep_baseline_plus_predicted_delta, clipped to 0-100",
   "sleep_feature_selection": "VarianceThreshold then SelectKBest(f_regression, k=60) inside each training fold",
+  "anomaly_detection": {
+    "method": "absolute_z_score",
+    "threshold": 2.0,
+    "directions": [
+      "low",
+      "normal",
+      "high"
+    ]
+  },
+  "population_baselines": {
+    "stress_score": {
+      "mean": 2.874235807860262,
+      "std": 1.1026085961709233,
+      "count": 2290
+    },
+    "sleep_efficiency_next_night": {
+      "mean": 93.77127509188578,
+      "std": 6.306244499830417,
+      "count": 3537
+    }
+  },
   "stress_feature_set": [
     "bpm",
     "mindfulness_session",
@@ -731,7 +752,7 @@
     },
     "sleep": {
       "n": 3537,
-      "mae": 2.310401003034823,
+      "mae": 2.3104010030348237,
       "baseline_mae": 3.3782555894234596,
       "r2": 0.7387536523638208
     }
@@ -751,7 +772,7 @@
     },
     "personal_baseline_delta_final": {
       "n": 3537,
-      "mae": 2.310401003034823,
+      "mae": 2.3104010030348237,
       "baseline_mae": 3.3782555894234596,
       "r2": 0.7387536523638208
     }
@@ -766,7 +787,7 @@
       },
       "Stress_RandomForest": {
         "n": 2290,
-        "mae": 0.8522717151847539,
+        "mae": 0.852271715184754,
         "baseline_mae": 0.9011918155641577,
         "r2": 0.09580627298305289
       },
@@ -786,9 +807,9 @@
     "sleep_direct": {
       "SleepDirect_ExtraTrees": {
         "n": 3537,
-        "mae": 2.812923396104409,
+        "mae": 2.8129233961044084,
         "baseline_mae": 3.3782555894234596,
-        "r2": 0.23073365441040183
+        "r2": 0.23073365441040206
       },
       "SleepDirect_RandomForest": {
         "n": 3537,
@@ -818,7 +839,7 @@
       },
       "SleepDelta_RandomForest": {
         "n": 3537,
-        "mae": 2.310401003034823,
+        "mae": 2.3104010030348237,
         "baseline_mae": 3.3782555894234596,
         "r2": 0.7387536523638208
       },
