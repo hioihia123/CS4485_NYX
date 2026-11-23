@@ -20,6 +20,7 @@ import pandas as pd
 from nyx_v16_features import (
     HOURLY_RAW_FEATURES,
     RAW_FEATURES,
+    _history_survey_score,
     request_to_feature_row,
 )
 
@@ -32,7 +33,15 @@ _stress_features = None
 _sleep_features = None
 _sleep_fallback = None
 _population_baselines = None
-_anomaly_threshold = 2.0
+_anomaly_config = None
+
+DEFAULT_ANOMALY_CONFIG = {
+    "method": "absolute_z_score",
+    "threshold": 2.0,
+    "personal_window_days": 7,
+    "personal_min_days": 3,
+    "personal_std_floors": {"stress_score": 0.25, "sleep_efficiency_next_night": 2.0},
+}
 
 
 # ============================================================
@@ -45,7 +54,7 @@ _anomaly_threshold = 2.0
 def init():
     global _stress_model, _sleep_model, _metadata
     global _stress_features, _sleep_features, _sleep_fallback
-    global _population_baselines, _anomaly_threshold
+    global _population_baselines, _anomaly_config
 
     default_dir = Path(__file__).resolve().parent / "model_bundle_v16"
     model_dir = Path(os.environ.get("AZUREML_MODEL_DIR", default_dir))
@@ -65,9 +74,7 @@ def init():
     _sleep_features = _metadata.get("sleep_feature_set_before_selection")
     _sleep_fallback = float(_metadata.get("sleep_fallback_mean", 90.0))
     _population_baselines = _metadata.get("population_baselines", {})
-    _anomaly_threshold = float(
-        _metadata.get("anomaly_detection", {}).get("threshold", 2.0)
-    )
+    _anomaly_config = {**DEFAULT_ANOMALY_CONFIG, **_metadata.get("anomaly_detection", {})}
 
     if not _stress_features or not _sleep_features:
         raise ValueError("V16 metadata.json is missing the stress/sleep feature sets")
@@ -100,70 +107,171 @@ def _sleep_baseline_for_row(row):
     return float(_sleep_fallback)
 
 
-def _first_finite(row, names):
-    for name in names:
-        value = pd.to_numeric(row.get(name), errors="coerce")
-        if isinstance(value, pd.Series):
-            value = value.iloc[0]
-        if pd.notna(value):
-            value = float(value)
-            if np.isfinite(value):
-                return value
-    return None
+# ============================================================
+# SECTION 2B: ANOMALY DETECTION (7-DAY PERSONAL + POPULATION)
+# ============================================================
+# Each prediction is compared with:
+#   - personal_7day: the user's own observed values over the 7 days before the
+#     predicted day, built straight from the request history (not from model
+#     features, so the trained models and their inputs are untouched)
+#   - population: all training participants (mean/std/percentiles stored in
+#     metadata.json at training time)
+#
+# Windows are "the 7 days before the predicted day":
+#   - stress predicts the current day -> surveys from current-7 .. current-1
+#   - sleep predicts the next night   -> sleep_efficiency from current-6 .. current
+#     (the current day's observed sleep_efficiency is the most recent night)
+
+def _finite(value):
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return None
+    return value if np.isfinite(value) else None
 
 
-def _anomaly(value, personal_baseline, personal_std, population_baseline, population_std, threshold):
-    population = population_baseline or {}
-    population_mean = population.get("mean")
-    population_std_value = population.get("std")
+def _personal_window_values(input_data, target, window_days):
+    current = input_data.get("current") or {}
+    current_date = pd.to_datetime(current.get("date"), errors="coerce")
+    if pd.isna(current_date):
+        return [], None, None
 
-    personal_delta = None
-    personal_z_score = None
-    personal_anomaly = False
-    if personal_baseline is not None:
-        personal_delta = float(value - personal_baseline)
-        if personal_std is not None and personal_std > 0:
-            personal_z_score = float(personal_delta / personal_std)
-            personal_anomaly = abs(personal_z_score) >= threshold
-
-    population_z_score = None
-    population_anomaly = False
-    if population_mean is not None and population_std_value is not None and population_std_value > 0:
-        population_z_score = float((value - population_mean) / population_std_value)
-        population_anomaly = abs(population_z_score) >= threshold
-
-    z_sources = [
-        z_score
-        for z_score in (personal_z_score, population_z_score)
-        if z_score is not None
-    ]
-    direction_source = max(z_sources, key=abs) if z_sources else None
-    if direction_source is None:
-        direction = "normal"
-    elif direction_source > threshold:
-        direction = "high"
-    elif direction_source < -threshold:
-        direction = "low"
+    if target == "stress_score":
+        end = current_date - pd.Timedelta(days=1)
+        valid_range = (1.0, 5.0)
     else:
-        direction = "normal"
+        end = current_date
+        valid_range = (0.0, 100.0)
+    start = end - pd.Timedelta(days=window_days - 1)
 
+    days = list(input_data.get("history") or [])
+    if target == "sleep_efficiency_next_night":
+        days.append(current)
+
+    by_date = {}
+    for item in days:
+        if not isinstance(item, dict):
+            continue
+        date = pd.to_datetime(item.get("date"), errors="coerce")
+        if pd.isna(date) or not (start <= date <= end):
+            continue
+        if target == "stress_score":
+            value = _finite(_history_survey_score(item))
+        else:
+            value = _finite((item.get("daily") or {}).get("sleep_efficiency"))
+        if value is None or not (valid_range[0] <= value <= valid_range[1]):
+            continue
+        by_date[date] = value  # one value per calendar day; later entries win
+
+    return list(by_date.values()), start.date().isoformat(), end.date().isoformat()
+
+
+def _direction(z_score, threshold):
+    if z_score is None:
+        return "unknown"
+    if z_score >= threshold:
+        return "high"
+    if z_score <= -threshold:
+        return "low"
+    return "normal"
+
+
+def _percentile(value, grid):
+    # grid holds the population values at percentiles 0..100. Ties (common on
+    # the discrete survey scale) resolve to the midpoint of the tied range.
+    if not grid or len(grid) < 2:
+        return None
+    grid = np.asarray(grid, dtype=float)
+    left = np.searchsorted(grid, value, side="left")
+    right = np.searchsorted(grid, value, side="right")
+    position = (left + right) / 2.0
+    return float(np.clip(position * 100.0 / (len(grid) - 1), 0.0, 100.0))
+
+
+def _personal_comparison(value, input_data, target, config):
+    window_days = int(config["personal_window_days"])
+    min_days = int(config["personal_min_days"])
+    threshold = float(config["threshold"])
+    std_floor = float((config.get("personal_std_floors") or {}).get(target, 0.0))
+
+    values, start, end = _personal_window_values(input_data, target, window_days)
+    result = {
+        "available": len(values) >= min_days,
+        "window_start": start,
+        "window_end": end,
+        "days_used": len(values),
+    }
+    if not result["available"]:
+        result.update({
+            "reason": f"needs at least {min_days} days with data in the last {window_days} days",
+            "baseline": None,
+            "std": None,
+            "std_used": None,
+            "deviation": None,
+            "percent_change": None,
+            "z_score": None,
+            "is_anomaly": False,
+            "direction": "unknown",
+        })
+        return result
+
+    baseline = float(np.mean(values))
+    std = float(np.std(values, ddof=1))
+    std_used = max(std, std_floor)
+    deviation = float(value - baseline)
+    z_score = float(deviation / std_used) if std_used > 0 else None
+    result.update({
+        "baseline": baseline,
+        "std": std,
+        "std_used": std_used,
+        "deviation": deviation,
+        "percent_change": float(deviation / baseline * 100.0) if baseline else None,
+        "z_score": z_score,
+        "is_anomaly": bool(z_score is not None and abs(z_score) >= threshold),
+        "direction": _direction(z_score, threshold),
+    })
+    return result
+
+
+def _population_comparison(value, target, config):
+    threshold = float(config["threshold"])
+    population = (_population_baselines or {}).get(target) or {}
+    mean = _finite(population.get("mean"))
+    std = _finite(population.get("std"))
+    if mean is None:
+        return {
+            "available": False,
+            "baseline": None,
+            "std": None,
+            "deviation": None,
+            "z_score": None,
+            "percentile": None,
+            "is_anomaly": False,
+            "direction": "unknown",
+        }
+
+    deviation = float(value - mean)
+    z_score = float(deviation / std) if std else None
     return {
-        "is_anomaly": bool(personal_anomaly or population_anomaly),
-        "direction": direction,
-        "personal": {
-            "baseline": personal_baseline,
-            "std": personal_std,
-            "deviation": personal_delta,
-            "z_score": personal_z_score,
-            "is_anomaly": bool(personal_anomaly),
-        },
-        "population": {
-            "baseline": population_mean,
-            "std": population_std_value,
-            "deviation": None if population_mean is None else float(value - population_mean),
-            "z_score": population_z_score,
-            "is_anomaly": bool(population_anomaly),
-        },
+        "available": True,
+        "baseline": mean,
+        "std": std,
+        "deviation": deviation,
+        "z_score": z_score,
+        "percentile": _percentile(value, population.get("percentiles")),
+        "is_anomaly": bool(z_score is not None and abs(z_score) >= threshold),
+        "direction": _direction(z_score, threshold),
+    }
+
+
+def _anomaly_report(value, input_data, target):
+    personal = _personal_comparison(value, input_data, target, _anomaly_config)
+    population = _population_comparison(value, target, _anomaly_config)
+    return {
+        "predicted_value": value,
+        "is_anomaly": bool(personal["is_anomaly"] or population["is_anomaly"]),
+        "personal_7day": personal,
+        "population": population,
     }
 
 
@@ -195,39 +303,8 @@ def run(raw_data):
         sleep_delta = float(_sleep_model.predict(row[_sleep_features])[0])
         sleep = float(np.clip(sleep_base + sleep_delta, 0.0, 100.0))
 
-        stress_personal_baseline = _first_finite(
-            row,
-            ["stress_personal_baseline"],
-        )
-        stress_personal_std = _first_finite(
-            row,
-            ["previous_10real_survey_std", "previous_5real_survey_std", "previous_3real_survey_std"],
-        )
-        sleep_personal_std = _first_finite(
-            row,
-            [
-                "sleep_efficiency_previous_30day_std",
-                "sleep_efficiency_previous_14day_std",
-                "sleep_efficiency_previous_7day_std",
-            ],
-        )
-
-        stress_anomaly = _anomaly(
-            stress,
-            stress_personal_baseline,
-            stress_personal_std,
-            _population_baselines.get("stress_score"),
-            None,
-            _anomaly_threshold,
-        )
-        sleep_anomaly = _anomaly(
-            sleep,
-            sleep_base,
-            sleep_personal_std,
-            _population_baselines.get("sleep_efficiency_next_night"),
-            None,
-            _anomaly_threshold,
-        )
+        stress_anomaly = _anomaly_report(stress, input_data, "stress_score")
+        sleep_anomaly = _anomaly_report(sleep, input_data, "sleep_efficiency_next_night")
 
         current = input_data.get("current") or {}
         current_daily = current.get("daily") or {}
@@ -269,8 +346,10 @@ def run(raw_data):
                     "sleep_efficiency_next_night": sleep,
                 },
                 "anomaly_detection": {
-                    "method": "absolute_z_score",
-                    "threshold": _anomaly_threshold,
+                    "method": _anomaly_config["method"],
+                    "threshold": _anomaly_config["threshold"],
+                    "personal_window_days": int(_anomaly_config["personal_window_days"]),
+                    "personal_min_days": int(_anomaly_config["personal_min_days"]),
                     "stress_score": stress_anomaly,
                     "sleep_efficiency_next_night": sleep_anomaly,
                 },

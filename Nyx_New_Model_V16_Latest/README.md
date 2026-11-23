@@ -49,14 +49,33 @@ After training:
 
 ## Anomaly detection
 
-Scoring compares each winner-model output against two baselines:
+Model inputs are unchanged; anomaly detection only adds outputs. Each prediction
+(`stress_score`, `sleep_efficiency_next_night`) is compared with two baselines:
 
-- the user's personal baseline, using prior survey history for stress and prior sleep history for sleep
-- the training population baseline, using the mean and population standard deviation of labeled training targets
+- **`personal_7day`**: the user's own observed values over the 7 days before the
+  predicted day, computed from the request `history`:
+  - stress (predicts today): survey scores from `date-7` to `date-1`
+  - sleep (predicts next night): `sleep_efficiency` from `date-6` to `date` (today's value is the most recent night)
 
-The default anomaly threshold is an absolute z-score of 2.0. The JSON response includes
-`anomaly_detection` for both predictions, with personal and population deviation details
-and a `high`, `low`, or `normal` direction.
+  This needs at least 3 days with data, otherwise `available: false`. The std is
+  the sample std, floored at 0.25 (stress) and 2.0 (sleep) so that a perfectly
+  flat week can't produce huge z-scores (`std` is the raw value, `std_used` the
+  floored one).
+- **`population`**: all training participants, with mean, std and a 0–100
+  percentile grid stored in `metadata.json` under `population_baselines`.
+
+Each comparison reports `baseline`, `deviation` (prediction − baseline),
+`z_score`, `is_anomaly` (|z| ≥ 2.0) and `direction` (`high` / `low` / `normal`,
+or `unknown` without a baseline). Personal comparisons also include `percent_change`
+and the window dates; population comparisons include the `percentile`. The
+target-level `is_anomaly` is true if either comparison flags it.
+
+The threshold, window length, minimum number of days and std floors live in
+`metadata.json` under `anomaly_detection` and are written by `train_nyx_model_v16.py`.
+
+Note: `sleep_prediction_details.personal_sleep_baseline` is a separate value, the
+longer-window (up to 30-day) baseline that the sleep model adds its predicted delta to.
+It is not the 7-day anomaly baseline.
 
 ## Important experiment in metadata.json
 

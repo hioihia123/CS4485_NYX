@@ -40,6 +40,8 @@ Each history day can include the same daily/hourly measurements. Historical `sle
 
 A history day may also include a real prior stress survey as `survey_stress_score` (1–5) or the survey mood fields. Only surveys dated before the prediction date are used.
 
+For the 7-day personal anomaly baseline, send **at least the last 7 days** of history. The personal comparison needs at least 3 days with data inside the window (surveys for stress, `sleep_efficiency` for sleep). With fewer days, `personal_7day.available` is `false`; the population comparison still runs.
+
 ## Excluded
 
 V16 does not require resting HR, RMSSD/HRV, minutes asleep, minutes awake, breathing rate, temperature, SpO2, SCL, VO2 max, distance, or sleep-stage ratios.

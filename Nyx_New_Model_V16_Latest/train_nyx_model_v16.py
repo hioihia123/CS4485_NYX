@@ -429,6 +429,51 @@ def fit_final_sleep_delta(df, winner):
 
 
 # ============================================================
+# SECTION 7B: ANOMALY-DETECTION BASELINES
+# ============================================================
+# Scoring compares each prediction against two reference points:
+#   1. the user's own last 7 days (computed at request time from history)
+#   2. the population of all training participants (computed here, once)
+# The population block stores mean/std plus a 101-point percentile grid so the
+# API can report "you are at the Nth percentile of all participants".
+
+ANOMALY_THRESHOLD = 2.0
+PERSONAL_WINDOW_DAYS = 7
+PERSONAL_MIN_DAYS = 3
+# Floors stop a near-zero personal std (e.g. a user who always answers 3.0)
+# from turning a tiny change into a huge z-score.
+PERSONAL_STD_FLOORS = {"stress_score": 0.25, "sleep_efficiency_next_night": 2.0}
+
+
+def anomaly_detection_config():
+    return {
+        "method": "absolute_z_score",
+        "threshold": ANOMALY_THRESHOLD,
+        "directions": ["low", "normal", "high"],
+        "personal_window_days": PERSONAL_WINDOW_DAYS,
+        "personal_min_days": PERSONAL_MIN_DAYS,
+        "personal_std_floors": PERSONAL_STD_FLOORS,
+    }
+
+
+def _population_block(values):
+    values = pd.to_numeric(values, errors="coerce").dropna().astype(float)
+    return {
+        "mean": float(values.mean()),
+        "std": float(values.std(ddof=0)),
+        "count": int(values.size),
+        "percentiles": [float(v) for v in np.percentile(values, np.arange(101))],
+    }
+
+
+def build_population_baselines(df):
+    return {
+        "stress_score": _population_block(df["survey_stress_target"]),
+        "sleep_efficiency_next_night": _population_block(df["sleep_target"]),
+    }
+
+
+# ============================================================
 # SECTION 8: RUN THE FULL TRAINING PROCESS
 # ============================================================
 # main() connects all of the earlier sections: load the CSV files, build the
@@ -509,23 +554,8 @@ def main():
         "sleep_training_target": "next_night_sleep_efficiency_minus_personal_sleep_baseline",
         "sleep_prediction_rule": "personal_sleep_baseline_plus_predicted_delta, clipped to 0-100",
         "sleep_feature_selection": "VarianceThreshold then SelectKBest(f_regression, k=60) inside each training fold",
-        "anomaly_detection": {
-            "method": "absolute_z_score",
-            "threshold": 2.0,
-            "directions": ["low", "normal", "high"],
-        },
-        "population_baselines": {
-            "stress_score": {
-                "mean": float(df["survey_stress_target"].dropna().mean()),
-                "std": float(df["survey_stress_target"].dropna().std(ddof=0)),
-                "count": int(df["survey_stress_target"].notna().sum()),
-            },
-            "sleep_efficiency_next_night": {
-                "mean": float(df["sleep_target"].dropna().mean()),
-                "std": float(df["sleep_target"].dropna().std(ddof=0)),
-                "count": int(df["sleep_target"].notna().sum()),
-            },
-        },
+        "anomaly_detection": anomaly_detection_config(),
+        "population_baselines": build_population_baselines(df),
         "stress_feature_set": STRESS_FEATURES,
         "sleep_feature_set_before_selection": SLEEP_FEATURES,
         "feature_counts": {
