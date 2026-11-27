@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NyxInsightsWeb.Data;
+using NyxInsightsWeb.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHttpClient<AzureMlPredictionService>();
+builder.Services.AddScoped<FoundryAgentService>();
 
 // ==========================================
 // 1. AZURE POSTGRESQL DATABASE

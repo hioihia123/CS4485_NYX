@@ -1,4 +1,4 @@
-﻿
+
 using Azure.AI.Projects;
 using Azure.AI.Extensions.OpenAI;
 using Azure.Identity;
