@@ -6,8 +6,73 @@
     ViewData["Title"] = "Log in";
 }
 
-<h1 class="mb-3">Log in</h1>
 
+<div class="nyx-login-body">
+    <div class="nyx-login-box">
+        <div class="nyx-login-main">
+            <form method="post" class="login-container" id="account"> 
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger" role="alert"></div>
+                
+                <div class="login-box">
+                    <div class="login-head">Nyx Insights</div>
+
+                    <div class="login-subhead">Sign in to your account.</div>
+
+                    <div class="login-input-box">
+                        <div class="login-input-head">Username:</div>
+                        <input asp-for="Input.Email" type="text" class="login-input" id="username" />
+                        <span asp-validation-for="Input.Email"
+                              class="text-danger"></span>
+                    </div>
+
+                    <div class="login-input-box">
+                        <div class="login-input-head">Password:</div>
+                        <input asp-for="Input.Password" class="login-input" id="password" />
+                        <span asp-validation-for="Input.Password"
+                              class="text-danger"></span>
+                    </div>
+                </div>
+
+                @* <div class="form-check mb-3"> *@
+                <div style="position: relative; height: 22px;">
+                    <div style="position: absolute; left: 0;">
+                        <input asp-for="Input.RememberMe"
+                               class="form-check-input" />
+                        <label asp-for="Input.RememberMe"
+                               class="form-check-label nyx-default-txt">
+                            Remember me?
+                        </label>
+                    </div>
+
+                    <div style="position: absolute; right: 0;">
+                        <a asp-page="./ForgotPassword" class="nyx-default-txt">
+                            Forgot your password?
+                        </a>
+                    </div>
+                </div>
+
+                <button class="login-btn" id="login-submit"
+                        type="submit">
+                    <div class="login-btn-txt">Login</div>
+                </button>
+
+                <div class="mt-2">
+                    
+                    <p>
+                        <a asp-page="./Register"
+                           asp-route-returnUrl="@Model.ReturnUrl" class="nyx-default-txt">
+                            Are you new? Create An Account
+                        </a>
+                    </p>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div> 
+
+@* 
 <div class="row">
     <div class="col-md-4">
         <section>
@@ -70,7 +135,7 @@
             </form>
         </section>
     </div>
-</div>
+</div>*@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

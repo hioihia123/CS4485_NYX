@@ -21,6 +21,14 @@ body {
   margin-bottom: 60px;
 }
 
+.nyx-default-txt {
+    color: #FFF;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+}
+
 .nyx-navbar {
     height: 90px;
     background: gray;
@@ -39,95 +47,104 @@ body {
 .nyx-login-body {
     display: block;
     margin-top: 60px;
+    padding: 16px;
 }
 
 .nyx-login-box {
-    width: 1232px;
-    height: 800px;
-    background: gray;
+    width: 866px;
+    height: 566px;
+    background: black;
     justify-self: center;
+    padding: 16px;
 }
 
 .nyx-login-main {
-    width: 616px;
-    height: 100%;
-    background: white;
-    padding-top: 120px;
+    width: 410px;
+    height: 534px;
+    border-radius: 5px;
+    background: #24384E;
+    padding-top: 50px;
 }
 
 .login-container {
-    width: 530px;
+    width: 346px;
     justify-self: center;
 }
 
 .login-box {
     width: 100%;
-    height: 427px;
+/*    height: 427px;*/
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 16px;
 /*    justify-self: center;*/
 }
 
 .login-head {
-    height: 75px;
+    height: 55px;
+    color: #FFF;
+    text-align: center;
     font-family: 'Inter', sans-serif;
+    font-size: 40px;
     font-style: normal;
     font-weight: 700;
-    font-size: 56px;
-    line-height: 68px;
-    text-align: center;
+    line-height: normal;
 }
 
 .login-subhead {
-    height: 64px;
+    height: 36px;
+    color: #FFF;
+    text-align: center;
     font-family: 'Inter', sans-serif;
+    font-size: 24px;
     font-style: normal;
     font-weight: 400;
-    font-size: 36px;
-    line-height: 44px;
-    text-align: center;
+    line-height: normal;
 }
 
 .login-input-box {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
 }
 
 .login-input-head {
-    height: 39px;
+    color: #FFF;
     font-family: 'Inter', sans-serif;
+    font-size: 20px;
     font-style: normal;
     font-weight: 400;
-    font-size: 32px;
-    line-height: 39px;
+    line-height: normal;
 }
 
 .login-input {
-    height: 45px;
+    height: 32px;
     width: 100%;
-    background: lightgrey;
+    border-radius: 3px;
+    border: 1px solid #D9D9D9;
+    background: #5A5A5A;
     text-decoration: none;
 }
 
 .login-btn {
-    margin-top: 120px;
-    width: 100%;
-    height: 73px;
-    background: grey;
+    margin-top: 55px;
+    width: 345px;
+    height: 48px;
+    aspect-ratio: 115/16;
+    border-radius: 3px;
+    background: rgba(15, 15, 15, 0.70);
     align-content: center;
 }
 
 .login-btn-txt {
+    color: #FFF;
+    text-align: center;
     font-family: 'Inter', sans-serif;
+    font-size: 20px;
     font-style: normal;
     font-weight: 400;
-    font-size: 32px;
-    line-height: 39px;
-    color: #FFFFFF;
-    justify-self: center;
+    line-height: normal;
 }
 
 

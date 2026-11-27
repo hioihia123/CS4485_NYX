@@ -25,3 +25,2405 @@
         <div class="hsection-body"></div>
     </div>
 </div>
+
+
+<div class="nyx-dashboard">
+
+    <!-- =========================================================
+         INPUT FORM
+         ========================================================= -->
+
+    <section class="nyx-card">
+
+        <h2>Analyze Your Health Data</h2>
+
+        <p class="nyx-muted">
+            Enter the 12 features expected by the prediction model.
+            Your analysis will automatically be saved to your account.
+        </p>
+
+
+        <form id="predictionForm"
+              onsubmit="return false;">
+
+
+            <!-- HEART / WELLNESS -->
+
+            <div class="nyx-section-title">
+                Heart Rate & Wellness
+            </div>
+
+
+            <div class="nyx-form-grid">
+
+                <div class="nyx-field">
+
+                    <label for="bpm">
+                        Heart Rate (BPM)
+                    </label>
+
+                    <input id="bpm"
+                           name="bpm"
+                           type="number"
+                           min="0"
+                           max="300"
+                           step="any"
+                           placeholder="80"
+                           required />
+
+                    <small>Beats per minute</small>
+
+                </div>
+
+
+                <div class="nyx-field">
+
+                    <label for="mindfulness_session">
+                        Mindfulness Session
+                    </label>
+
+                    <input id="mindfulness_session"
+                           name="mindfulness_session"
+                           type="number"
+                           min="0"
+                           step="any"
+                           placeholder="0"
+                           required />
+
+                </div>
+
+
+                <div class="nyx-field">
+
+                    <label for="exertion_points_percentage">
+                        Exertion Percentage
+                    </label>
+
+                    <input id="exertion_points_percentage"
+                           name="exertion_points_percentage"
+                           type="number"
+                           min="0"
+                           max="1"
+                           step="any"
+                           placeholder="0.75"
+                           required />
+
+                    <small>Decimal from 0 to 1</small>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIVITY -->
+
+            <div class="nyx-section-title">
+                Daily Activity
+            </div>
+
+
+            <div class="nyx-form-grid">
+
+                <div class="nyx-field">
+
+                    <label>
+                        Very Active Minutes
+                    </label>
+
+                    <input name="very_active_minutes"
+                           type="number"
+                           min="0"
+                           step="any"
+                           placeholder="20"
+                           required />
+
+                </div>
+
+
+                <div class="nyx-field">
+
+                    <label>
+                        Moderately Active Minutes
+                    </label>
+
+                    <input name="moderately_active_minutes"
+                           type="number"
+                           min="0"
+                           step="any"
+                           placeholder="30"
+                           required />
+
+                </div>
+
+
+                <div class="nyx-field">
+
+                    <label>
+                        Lightly Active Minutes
+                    </label>
+
+                    <input name="lightly_active_minutes"
+                           type="number"
+                           min="0"
+                           step="any"
+                           placeholder="131"
+                           required />
+
+                </div>
+
+
+                <div class="nyx-field">
+
+                    <label>
+                        Sedentary Minutes
+                    </label>
+
+                    <input name="sedentary_minutes"
+                           type="number"
+                           min="0"
+                           step="any"
+                           placeholder="600"
+                           required />
+
+                </div>
+
+
+                <div class="nyx-field">
+
+                    <label>
+                        Steps
+                    </label>
+
+                    <input name="steps"
+                           type="number"
+                           min="0"
+                           step="any"
+                           placeholder="7389"
+                           required />
+
+                </div>
+
+
+                <div class="nyx-field">
+
+                    <label>
+                        Calories
+                    </label>
+
+                    <input name="calories"
+                           type="number"
+                           min="0"
+                           step="any"
+                           placeholder="2059"
+                           required />
+
+                </div>
+
+            </div>
+
+
+            <!-- HR ZONES -->
+
+            <div class="nyx-section-title">
+                Heart Rate Zones
+            </div>
+
+
+            <div class="nyx-form-grid">
+
+                <div class="nyx-field">
+
+                    <label>
+                        Zone 1 Minutes
+                    </label>
+
+                    <input name="minutes_in_default_zone_1"
+                           type="number"
+                           min="0"
+                           step="any"
+                           placeholder="123"
+                           required />
+
+                </div>
+
+
+                <div class="nyx-field">
+
+                    <label>
+                        Zone 2 Minutes
+                    </label>
+
+                    <input name="minutes_in_default_zone_2"
+                           type="number"
+                           min="0"
+                           step="any"
+                           placeholder="0"
+                           required />
+
+                </div>
+
+
+                <div class="nyx-field">
+
+                    <label>
+                        Zone 3 Minutes
+                    </label>
+
+                    <input name="minutes_in_default_zone_3"
+                           type="number"
+                           min="0"
+                           step="any"
+                           placeholder="0"
+                           required />
+
+                </div>
+
+            </div>
+
+
+            <div class="nyx-warning">
+
+                <strong>Experimental model:</strong>
+                These values are model-generated estimates and should
+                not be treated as medical measurements or medical advice.
+
+            </div>
+
+
+            <div class="nyx-actions">
+
+                <!--
+                    IMPORTANT:
+                    type="button" prevents browser form submission
+                    and therefore prevents page reload.
+                -->
+
+                <button id="analyzeButton"
+                        type="button"
+                        class="nyx-button nyx-primary">
+
+                    Analyze My Health Data
+
+                </button>
+
+
+                <span id="loadingMessage"
+                      class="nyx-muted"
+                      hidden>
+
+                    Analyzing your data...
+
+                </span>
+
+            </div>
+
+
+            <div id="errorMessage"
+                 class="nyx-error">
+            </div>
+
+
+            <div id="saveMessage"
+                 class="nyx-success">
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- =========================================================
+         CURRENT PREDICTION
+         ========================================================= -->
+
+    <section id="resultsSection"
+             class="nyx-results">
+
+
+        <div class="nyx-card">
+
+            <h2>Prediction Results</h2>
+
+            <p class="nyx-muted">
+                Latest model output from the health data you submitted.
+            </p>
+
+
+            <div class="nyx-score-grid">
+
+                <div class="nyx-score">
+
+                    <div class="nyx-score-label">
+                        Estimated Stress Score
+                    </div>
+
+                    <div id="stressScore"
+                         class="nyx-score-value">
+
+                        --
+
+                    </div>
+
+                </div>
+
+
+                <div class="nyx-score">
+
+                    <div class="nyx-score-label">
+                        Next-Night Sleep Efficiency
+                    </div>
+
+                    <div id="sleepScore"
+                         class="nyx-score-value">
+
+                        --
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="nyx-card">
+
+            <h2>AI Health Data Analysis</h2>
+
+            <p class="nyx-muted">
+                Generated from the Azure ML result using the
+                Nyx AI explanation service.
+            </p>
+
+
+            <div id="explanation"
+                 class="nyx-explanation">
+            </div>
+
+        </div>
+
+
+        <div class="nyx-card">
+
+            <h2>Model Performance</h2>
+
+            <p class="nyx-muted">
+                Evaluation metrics for the current prediction models.
+            </p>
+
+
+            <div id="performanceMetrics">
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         TREND DASHBOARD
+         ========================================================= -->
+
+    <section id="trendsSection"
+             class="nyx-card"
+             style="display: none;">
+
+
+        <h2>Health Trends</h2>
+
+
+        <!-- KPI CARDS -->
+
+        <div class="nyx-kpi-grid">
+
+            <div class="nyx-kpi">
+
+                <div class="nyx-kpi-label">
+                    Latest Stress
+                </div>
+
+                <div id="latestStress"
+                     class="nyx-kpi-value">
+
+                    --
+
+                </div>
+
+                <div class="nyx-kpi-subtitle">
+                    Model estimate
+                </div>
+
+            </div>
+
+
+            <div class="nyx-kpi">
+
+                <div class="nyx-kpi-label">
+                    Latest Sleep
+                </div>
+
+                <div id="latestSleep"
+                     class="nyx-kpi-value">
+
+                    --
+
+                </div>
+
+                <div class="nyx-kpi-subtitle">
+                    Next-night efficiency
+                </div>
+
+            </div>
+
+
+            <div class="nyx-kpi">
+
+                <div class="nyx-kpi-label">
+                    Latest Steps
+                </div>
+
+                <div id="latestSteps"
+                     class="nyx-kpi-value">
+
+                    --
+
+                </div>
+
+                <div class="nyx-kpi-subtitle">
+                    Submitted activity
+                </div>
+
+            </div>
+
+
+            <div class="nyx-kpi">
+
+                <div class="nyx-kpi-label">
+                    Latest BPM
+                </div>
+
+                <div id="latestBpm"
+                     class="nyx-kpi-value">
+
+                    --
+
+                </div>
+
+                <div class="nyx-kpi-subtitle">
+                    Submitted heart rate
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="latestAiCard"
+             class="nyx-chart-card"
+             style="margin-bottom: 24px;">
+
+            <div class="nyx-chart-header">
+
+                <div>
+                    <h3 class="nyx-chart-title">
+                        Latest AI Health Analysis
+                    </h3>
+
+                </div>
+
+                <span class="nyx-chart-badge">
+                    AI Explanation
+                </span>
+
+            </div>
+
+            <div id="latestAiExplanation"
+                 class="nyx-explanation">
+
+                No AI explanation is available yet.
+
+            </div>
+
+        </div>
+
+        <!-- CHART GRID -->
+
+        <div class="nyx-chart-grid">
+
+
+            <!-- STRESS -->
+
+            <div class="nyx-chart-card">
+
+                <div class="nyx-chart-header">
+
+                    <div>
+
+                        <h3 class="nyx-chart-title">
+                            Stress Trend
+                        </h3>
+
+                    </div>
+
+
+                    <span class="nyx-chart-badge">
+                        ML Prediction
+                    </span>
+
+                </div>
+
+
+                <div class="nyx-chart-container">
+
+                    <canvas id="stressTrendChart">
+                    </canvas>
+
+                </div>
+
+            </div>
+
+
+            <!-- SLEEP -->
+
+            <div class="nyx-chart-card">
+
+                <div class="nyx-chart-header">
+
+                    <div>
+
+                        <h3 class="nyx-chart-title">
+                            Sleep Efficiency
+                        </h3>
+
+
+                    </div>
+
+
+                    <span class="nyx-chart-badge">
+                        Percentage
+                    </span>
+
+                </div>
+
+
+                <div class="nyx-chart-container">
+
+                    <canvas id="sleepTrendChart">
+                    </canvas>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIVITY -->
+
+            <div class="nyx-chart-card nyx-chart-card-wide">
+
+                <div class="nyx-chart-header">
+
+                    <div>
+
+                        <h3 class="nyx-chart-title">
+                            Activity & Heart Rate
+                        </h3>
+
+                    </div>
+
+
+                    <span class="nyx-chart-badge">
+                        Wearable Data
+                    </span>
+
+                </div>
+
+
+                <div class="nyx-chart-container">
+
+                    <canvas id="activityTrendChart">
+                    </canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         HISTORY TABLE
+         ========================================================= -->
+
+    <section class="nyx-card">
+
+        <h2>Prediction History</h2>
+
+        <div id="historyStatus"
+             class="nyx-muted"
+             style="margin-top: 14px;">
+
+            Loading prediction history...
+
+        </div>
+
+
+        <div id="historyTableWrap"
+             class="nyx-table-wrap"
+             hidden>
+
+
+            <table id="historyTable"
+                   class="history-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Date</th>
+                        <th>BPM</th>
+                        <th>Steps</th>
+                        <th>Calories</th>
+                        <th>Stress</th>
+                        <th>Sleep Efficiency</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="historyBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- ============================================================
+     CHART.JS
+     ============================================================ -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+    console.log(
+        "NYX dashboard JavaScript loaded."
+    );
+
+
+    // ============================================================
+    // DOM ELEMENTS
+    // ============================================================
+
+    const predictionForm =
+        document.getElementById(
+            "predictionForm");
+
+
+    const analyzeButton =
+        document.getElementById(
+            "analyzeButton");
+
+
+    const loadingMessage =
+        document.getElementById(
+            "loadingMessage");
+
+
+    const errorMessage =
+        document.getElementById(
+            "errorMessage");
+
+
+    const saveMessage =
+        document.getElementById(
+            "saveMessage");
+
+
+    const resultsSection =
+        document.getElementById(
+            "resultsSection");
+
+
+    const trendsSection =
+        document.getElementById(
+            "trendsSection");
+
+
+    // ============================================================
+    // CHART REFERENCES
+    //
+    // Stored so old Chart.js instances can be destroyed before
+    // rebuilding after another prediction.
+    // ============================================================
+
+    let stressChart =
+        null;
+
+
+    let sleepChart =
+        null;
+
+
+    let activityChart =
+        null;
+
+
+    // ============================================================
+    // PREVENT NORMAL HTML FORM SUBMISSION
+    // ============================================================
+
+    predictionForm.addEventListener(
+        "submit",
+        function (event)
+        {
+            event.preventDefault();
+
+            return false;
+        });
+
+
+    analyzeButton.addEventListener(
+        "click",
+        analyzeHealthData);
+
+
+    // ============================================================
+    // ANALYZE HEALTH DATA
+    // ============================================================
+
+    async function analyzeHealthData()
+    {
+        errorMessage.style.display =
+            "none";
+
+
+        saveMessage.style.display =
+            "none";
+
+
+        resultsSection.style.display =
+            "none";
+
+
+        // Browser built-in required-field validation.
+
+        if (!predictionForm.reportValidity())
+        {
+            return;
+        }
+
+
+        analyzeButton.disabled =
+            true;
+
+
+        analyzeButton.textContent =
+            "Analyzing...";
+
+
+        loadingMessage.hidden =
+            false;
+
+
+        try
+        {
+            // ----------------------------------------------------
+            // Convert form inputs into JSON numeric features.
+            // ----------------------------------------------------
+
+            const formData =
+                new FormData(
+                    predictionForm);
+
+
+            const features =
+                {};
+
+
+            for (const [name, value]
+                of formData.entries())
+            {
+                const numericValue =
+                    Number(value);
+
+
+                if (!Number.isFinite(
+                        numericValue))
+                {
+                    throw new Error(
+                        `Invalid value entered for ${name}.`);
+                }
+
+
+                features[name] =
+                    numericValue;
+            }
+
+
+            console.log(
+                "Prediction request:",
+                features);
+
+
+            // ----------------------------------------------------
+            // ASP.NET endpoint:
+            //
+            // Azure ML
+            // → Foundry
+            // → PostgreSQL
+            // ----------------------------------------------------
+
+            const response =
+                await fetch(
+                    "/api/predictions/predict-and-explain",
+                    {
+                        method:
+                            "POST",
+
+                        headers:
+                        {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                features)
+                    });
+
+
+            const responseText =
+                await response.text();
+
+
+            console.log(
+                "Prediction status:",
+                response.status);
+
+
+            console.log(
+                "Prediction response:",
+                responseText);
+
+
+            let data;
+
+
+            try
+            {
+                data =
+                    JSON.parse(
+                        responseText);
+            }
+            catch
+            {
+                throw new Error(
+                    "The server returned an invalid response.");
+            }
+
+
+            if (!response.ok)
+            {
+                throw new Error(
+                    data.error ??
+                    "Prediction request failed.");
+            }
+
+
+            // ----------------------------------------------------
+            // Extract prediction
+            // ----------------------------------------------------
+
+            const predictionResult =
+                data.predictionResult;
+
+
+            if (!predictionResult)
+            {
+                throw new Error(
+                    "Prediction result was missing.");
+            }
+
+
+            const predictions =
+                predictionResult.predictions;
+
+
+            if (!predictions)
+            {
+                throw new Error(
+                    "Prediction values were missing.");
+            }
+
+
+            // ----------------------------------------------------
+            // DISPLAY CURRENT PREDICTION
+            // ----------------------------------------------------
+
+            document
+                .getElementById(
+                    "stressScore")
+                .textContent =
+
+                Number(
+                    predictions.stress_score
+                ).toFixed(2);
+
+
+            document
+                .getElementById(
+                    "sleepScore")
+                .textContent =
+
+                Number(
+                    predictions
+                        .sleep_efficiency_next_night
+                ).toFixed(2) + "%";
+
+
+            document
+                .getElementById(
+                    "explanation")
+                .textContent =
+
+                data.explanation ??
+                "No explanation was returned.";
+
+
+            displayPerformance(
+                predictionResult
+                    .model_performance);
+
+
+            resultsSection.style.display =
+                "block";
+
+
+            // ----------------------------------------------------
+            // DATABASE SAVE CONFIRMATION
+            // ----------------------------------------------------
+
+            saveMessage.textContent =
+                `Prediction saved successfully. ` +
+                `History ID: ${data.predictionId}`;
+
+
+            saveMessage.style.display =
+                "block";
+
+
+            // ----------------------------------------------------
+            // IMPORTANT:
+            // Reload database history and refresh all charts.
+            // ----------------------------------------------------
+
+            await loadHistory();
+
+
+            resultsSection.scrollIntoView(
+                {
+                    behavior:
+                        "smooth",
+
+                    block:
+                        "start"
+                });
+        }
+        catch (error)
+        {
+            console.error(
+                "NYX prediction error:",
+                error);
+
+
+            errorMessage.textContent =
+                error.message ??
+                "Something went wrong.";
+
+
+            errorMessage.style.display =
+                "block";
+        }
+        finally
+        {
+            analyzeButton.disabled =
+                false;
+
+
+            analyzeButton.textContent =
+                "Analyze My Health Data";
+
+
+            loadingMessage.hidden =
+                true;
+        }
+    }
+
+
+    // ============================================================
+    // LOAD SAVED HISTORY
+    // ============================================================
+
+    async function loadHistory()
+    {
+        const historyStatus =
+            document.getElementById(
+                "historyStatus");
+
+
+        const historyTableWrap =
+            document.getElementById(
+                "historyTableWrap");
+
+
+        const historyBody =
+            document.getElementById(
+                "historyBody");
+
+
+        historyStatus.textContent =
+            "Loading prediction history...";
+
+
+        try
+        {
+            const response =
+                await fetch(
+                    "/api/predictions/history",
+                    {
+                        method:
+                            "GET",
+
+                        headers:
+                        {
+                            "Accept":
+                                "application/json"
+                        }
+                    });
+
+
+            const responseText =
+                await response.text();
+
+
+            console.log(
+                "History HTTP status:",
+                response.status);
+
+
+            console.log(
+                "History response:",
+                responseText);
+
+
+            if (!response.ok)
+            {
+                throw new Error(
+                    `History request failed: HTTP ${response.status}`);
+            }
+
+
+            const history =
+                JSON.parse(
+                    responseText);
+
+
+            historyBody.replaceChildren();
+
+
+            // ----------------------------------------------------
+            // NO HISTORY
+            // ----------------------------------------------------
+
+            if (!history ||
+                history.length === 0)
+            {
+                historyStatus.textContent =
+                    "No saved predictions yet.";
+
+
+                historyTableWrap.hidden =
+                    true;
+
+
+                trendsSection.style.display =
+                    "none";
+
+
+                destroyCharts();
+
+
+                return;
+            }
+
+
+            // ----------------------------------------------------
+            // HISTORY EXISTS
+            // ----------------------------------------------------
+
+            historyStatus.textContent =
+                `${history.length} saved prediction(s)`;
+
+
+            historyTableWrap.hidden =
+                false;
+
+
+            // History endpoint currently returns newest first.
+
+            for (const item of history)
+            {
+                const row =
+                    document.createElement(
+                        "tr");
+
+
+                appendCell(
+                    row,
+                    formatTableDate(
+                        item.createdAt));
+
+
+                appendCell(
+                    row,
+                    formatWholeNumber(
+                        item.bpm));
+
+
+                appendCell(
+                    row,
+                    formatWholeNumber(
+                        item.steps));
+
+
+                appendCell(
+                    row,
+                    formatWholeNumber(
+                        item.calories));
+
+
+                appendCell(
+                    row,
+                    Number(
+                        item.stressScore
+                    ).toFixed(2));
+
+
+                appendCell(
+                    row,
+                    Number(
+                        item.sleepEfficiencyNextNight
+                    ).toFixed(2) + "%");
+
+
+                historyBody.appendChild(
+                    row);
+            }
+
+
+            // ----------------------------------------------------
+            // BUILD ANALYTICS DASHBOARD
+            // ----------------------------------------------------
+
+            renderTrendCharts(
+                history);
+        }
+        catch (error)
+        {
+            console.error(
+                "History error:",
+                error);
+
+
+            historyStatus.textContent =
+                "Could not load prediction history.";
+
+
+            historyTableWrap.hidden =
+                true;
+
+
+            trendsSection.style.display =
+                "none";
+        }
+    }
+
+
+    // ============================================================
+    // RENDER MODERN CHARTS
+    // ============================================================
+
+    function renderTrendCharts(history)
+    {
+        if (!history ||
+            history.length === 0)
+        {
+            trendsSection.style.display =
+                "none";
+
+            return;
+        }
+
+
+        if (typeof Chart === "undefined")
+        {
+            console.error(
+                "Chart.js did not load.");
+
+            return;
+        }
+
+
+        trendsSection.style.display =
+            "block";
+
+
+        // --------------------------------------------------------
+        // Database returns newest first.
+        //
+        // Charts should visually move:
+        //
+        // OLD → NEW
+        // --------------------------------------------------------
+
+        const chronological =
+            [...history].sort(
+                (a, b) =>
+                    new Date(
+                        a.createdAt) -
+                    new Date(
+                        b.createdAt)
+            );
+
+
+        const latest =
+            chronological[
+                chronological.length - 1];
+
+        const latestAiExplanation =
+        document.getElementById( "latestAiExplanation");
+
+
+    if (latest.aiExplanation && latest.aiExplanation.trim() !== ""){
+            latestAiExplanation.textContent = latest.aiExplanation;
+    }
+    else{
+            latestAiExplanation.textContent ="No AI explanation was saved for the latest prediction.";
+    }
+
+
+        // --------------------------------------------------------
+        // UPDATE KPI CARDS
+        // --------------------------------------------------------
+
+        document
+            .getElementById(
+                "latestStress")
+            .textContent =
+
+            Number(
+                latest.stressScore
+            ).toFixed(2);
+
+
+        document
+            .getElementById(
+                "latestSleep")
+            .textContent =
+
+            Number(
+                latest.sleepEfficiencyNextNight
+            ).toFixed(1) + "%";
+
+
+        document
+            .getElementById(
+                "latestSteps")
+            .textContent =
+
+            Number(
+                latest.steps
+            ).toLocaleString();
+
+
+        document
+            .getElementById(
+                "latestBpm")
+            .textContent =
+
+            Number(
+                latest.bpm
+            ).toFixed(0);
+
+
+        // --------------------------------------------------------
+        // CHART DATA
+        // --------------------------------------------------------
+
+        const labels =
+            chronological.map(
+                item =>
+                    formatChartDate(
+                        item.createdAt)
+            );
+
+
+        const stressValues =
+            chronological.map(
+                item =>
+                    Number(
+                        item.stressScore)
+            );
+
+
+        const sleepValues =
+            chronological.map(
+                item =>
+                    Number(
+                        item.sleepEfficiencyNextNight)
+            );
+
+
+        const stepValues =
+            chronological.map(
+                item =>
+                    Number(
+                        item.steps)
+            );
+
+
+        const bpmValues =
+            chronological.map(
+                item =>
+                    Number(
+                        item.bpm)
+            );
+
+
+        // --------------------------------------------------------
+        // REMOVE OLD CHARTS
+        // --------------------------------------------------------
+
+        destroyCharts();
+
+
+        // ========================================================
+        // STRESS CHART
+        // ========================================================
+
+        const stressCanvas =
+            document.getElementById(
+                "stressTrendChart");
+
+
+        const stressContext =
+            stressCanvas.getContext(
+                "2d");
+
+
+        const stressGradient =
+            stressContext
+                .createLinearGradient(
+                    0,
+                    0,
+                    0,
+                    320);
+
+
+        stressGradient.addColorStop(
+            0,
+            "rgba(92, 107, 192, 0.30)");
+
+
+        stressGradient.addColorStop(
+            1,
+            "rgba(92, 107, 192, 0.02)");
+
+
+        stressChart =
+            new Chart(
+                stressContext,
+                {
+                    type:
+                        "line",
+
+                    data:
+                    {
+                        labels:
+                            labels,
+
+                        datasets:
+                        [
+                            {
+                                label:
+                                    "Stress score",
+
+                                data:
+                                    stressValues,
+
+                                borderColor:
+                                    "#5968c4",
+
+                                backgroundColor:
+                                    stressGradient,
+
+                                fill:
+                                    true,
+
+                                borderWidth:
+                                    2.5,
+
+                                tension:
+                                    0.38,
+
+                                pointRadius:
+                                    4,
+
+                                pointHoverRadius:
+                                    7,
+
+                                pointBackgroundColor:
+                                    "#ffffff",
+
+                                pointBorderColor:
+                                    "#5968c4",
+
+                                pointBorderWidth:
+                                    2
+                            }
+                        ]
+                    },
+
+                    options:
+                        createModernChartOptions(
+                            "Stress Score")
+                });
+
+
+        // ========================================================
+        // SLEEP CHART
+        // ========================================================
+
+        const sleepCanvas =
+            document.getElementById(
+                "sleepTrendChart");
+
+
+        const sleepContext =
+            sleepCanvas.getContext(
+                "2d");
+
+
+        const sleepGradient =
+            sleepContext
+                .createLinearGradient(
+                    0,
+                    0,
+                    0,
+                    320);
+
+
+        sleepGradient.addColorStop(
+            0,
+            "rgba(44, 160, 133, 0.28)");
+
+
+        sleepGradient.addColorStop(
+            1,
+            "rgba(44, 160, 133, 0.02)");
+
+
+        sleepChart =
+            new Chart(
+                sleepContext,
+                {
+                    type:
+                        "line",
+
+                    data:
+                    {
+                        labels:
+                            labels,
+
+                        datasets:
+                        [
+                            {
+                                label:
+                                    "Sleep efficiency",
+
+                                data:
+                                    sleepValues,
+
+                                borderColor:
+                                    "#2d9c82",
+
+                                backgroundColor:
+                                    sleepGradient,
+
+                                fill:
+                                    true,
+
+                                borderWidth:
+                                    2.5,
+
+                                tension:
+                                    0.38,
+
+                                pointRadius:
+                                    4,
+
+                                pointHoverRadius:
+                                    7,
+
+                                pointBackgroundColor:
+                                    "#ffffff",
+
+                                pointBorderColor:
+                                    "#2d9c82",
+
+                                pointBorderWidth:
+                                    2
+                            }
+                        ]
+                    },
+
+                    options:
+                    {
+                        ...createModernChartOptions(
+                            "Sleep Efficiency"),
+
+                        scales:
+                        {
+                            x:
+                                createXAxis(),
+
+                            y:
+                            {
+                                min:
+                                    0,
+
+                                max:
+                                    100,
+
+                                border:
+                                {
+                                    display:
+                                        false
+                                },
+
+                                grid:
+                                {
+                                    color:
+                                        "rgba(148, 163, 184, 0.12)"
+                                },
+
+                                title:
+                                {
+                                    display:
+                                        true,
+
+                                    text:
+                                        "Sleep Efficiency (%)",
+
+                                    color:
+                                        "#748095",
+
+                                    font:
+                                    {
+                                        size:
+                                            11
+                                    }
+                                },
+
+                                ticks:
+                                {
+                                    color:
+                                        "#7a8495",
+
+                                    padding:
+                                        8,
+
+                                    callback:
+                                        value =>
+                                            value + "%"
+                                }
+                            }
+                        }
+                    }
+                });
+
+
+        // ========================================================
+        // STEPS + BPM CHART
+        // ========================================================
+
+        const activityCanvas =
+            document.getElementById(
+                "activityTrendChart");
+
+
+        const activityContext =
+            activityCanvas.getContext(
+                "2d");
+
+
+        activityChart =
+            new Chart(
+                activityContext,
+                {
+                    type:
+                        "line",
+
+                    data:
+                    {
+                        labels:
+                            labels,
+
+                        datasets:
+                        [
+                            {
+                                label:
+                                    "Steps",
+
+                                data:
+                                    stepValues,
+
+                                yAxisID:
+                                    "ySteps",
+
+                                borderColor:
+                                    "#d48b39",
+
+                                backgroundColor:
+                                    "rgba(212, 139, 57, 0.10)",
+
+                                borderWidth:
+                                    2.5,
+
+                                tension:
+                                    0.35,
+
+                                pointRadius:
+                                    4,
+
+                                pointHoverRadius:
+                                    7,
+
+                                pointBackgroundColor:
+                                    "#ffffff",
+
+                                pointBorderColor:
+                                    "#d48b39",
+
+                                pointBorderWidth:
+                                    2
+                            },
+
+                            {
+                                label:
+                                    "Heart Rate (BPM)",
+
+                                data:
+                                    bpmValues,
+
+                                yAxisID:
+                                    "yBpm",
+
+                                borderColor:
+                                    "#d75f73",
+
+                                backgroundColor:
+                                    "rgba(215, 95, 115, 0.10)",
+
+                                borderWidth:
+                                    2.5,
+
+                                tension:
+                                    0.35,
+
+                                pointRadius:
+                                    4,
+
+                                pointHoverRadius:
+                                    7,
+
+                                pointBackgroundColor:
+                                    "#ffffff",
+
+                                pointBorderColor:
+                                    "#d75f73",
+
+                                pointBorderWidth:
+                                    2
+                            }
+                        ]
+                    },
+
+                    options:
+                    {
+                        responsive:
+                            true,
+
+                        maintainAspectRatio:
+                            false,
+
+                        animation:
+                        {
+                            duration:
+                                650
+                        },
+
+                        interaction:
+                        {
+                            mode:
+                                "index",
+
+                            intersect:
+                                false
+                        },
+
+                        plugins:
+                        {
+                            legend:
+                            {
+                                display:
+                                    true,
+
+                                position:
+                                    "top",
+
+                                align:
+                                    "end",
+
+                                labels:
+                                {
+                                    usePointStyle:
+                                        true,
+
+                                    pointStyle:
+                                        "circle",
+
+                                    boxWidth:
+                                        8,
+
+                                    padding:
+                                        18,
+
+                                    color:
+                                        "#5d687a",
+
+                                    font:
+                                    {
+                                        size:
+                                            12
+                                    }
+                                }
+                            },
+
+                            tooltip:
+                            {
+                                backgroundColor:
+                                    "#1f2937",
+
+                                titleColor:
+                                    "#ffffff",
+
+                                bodyColor:
+                                    "#e5e7eb",
+
+                                padding:
+                                    12,
+
+                                cornerRadius:
+                                    9,
+
+                                displayColors:
+                                    true
+                            }
+                        },
+
+                        scales:
+                        {
+                            x:
+                                createXAxis(),
+
+                            ySteps:
+                            {
+                                type:
+                                    "linear",
+
+                                position:
+                                    "left",
+
+                                beginAtZero:
+                                    true,
+
+                                border:
+                                {
+                                    display:
+                                        false
+                                },
+
+                                grid:
+                                {
+                                    color:
+                                        "rgba(148, 163, 184, 0.12)"
+                                },
+
+                                title:
+                                {
+                                    display:
+                                        true,
+
+                                    text:
+                                        "Steps",
+
+                                    color:
+                                        "#748095",
+
+                                    font:
+                                    {
+                                        size:
+                                            11
+                                    }
+                                },
+
+                                ticks:
+                                {
+                                    color:
+                                        "#7a8495",
+
+                                    callback:
+                                        value =>
+                                            Number(
+                                                value)
+                                                .toLocaleString()
+                                }
+                            },
+
+                            yBpm:
+                            {
+                                type:
+                                    "linear",
+
+                                position:
+                                    "right",
+
+                                beginAtZero:
+                                    false,
+
+                                border:
+                                {
+                                    display:
+                                        false
+                                },
+
+                                grid:
+                                {
+                                    drawOnChartArea:
+                                        false
+                                },
+
+                                title:
+                                {
+                                    display:
+                                        true,
+
+                                    text:
+                                        "BPM",
+
+                                    color:
+                                        "#748095",
+
+                                    font:
+                                    {
+                                        size:
+                                            11
+                                    }
+                                },
+
+                                ticks:
+                                {
+                                    color:
+                                        "#7a8495"
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
+
+    // ============================================================
+    // COMMON MODERN CHART OPTIONS
+    // ============================================================
+
+    function createModernChartOptions(
+        yAxisTitle)
+    {
+        return {
+            responsive:
+                true,
+
+            maintainAspectRatio:
+                false,
+
+            animation:
+            {
+                duration:
+                    650,
+
+                easing:
+                    "easeOutQuart"
+            },
+
+            interaction:
+            {
+                mode:
+                    "index",
+
+                intersect:
+                    false
+            },
+
+            plugins:
+            {
+                legend:
+                {
+                    display:
+                        true,
+
+                    position:
+                        "top",
+
+                    align:
+                        "end",
+
+                    labels:
+                    {
+                        usePointStyle:
+                            true,
+
+                        pointStyle:
+                            "circle",
+
+                        boxWidth:
+                            8,
+
+                        padding:
+                            18,
+
+                        color:
+                            "#5d687a",
+
+                        font:
+                        {
+                            size:
+                                12
+                        }
+                    }
+                },
+
+                tooltip:
+                {
+                    enabled:
+                        true,
+
+                    backgroundColor:
+                        "#1f2937",
+
+                    titleColor:
+                        "#ffffff",
+
+                    bodyColor:
+                        "#e5e7eb",
+
+                    padding:
+                        12,
+
+                    cornerRadius:
+                        9,
+
+                    displayColors:
+                        true
+                }
+            },
+
+            scales:
+            {
+                x:
+                    createXAxis(),
+
+                y:
+                {
+                    beginAtZero:
+                        false,
+
+                    border:
+                    {
+                        display:
+                            false
+                    },
+
+                    grid:
+                    {
+                        color:
+                            "rgba(148, 163, 184, 0.12)"
+                    },
+
+                    title:
+                    {
+                        display:
+                            true,
+
+                        text:
+                            yAxisTitle,
+
+                        color:
+                            "#748095",
+
+                        font:
+                        {
+                            size:
+                                11
+                        }
+                    },
+
+                    ticks:
+                    {
+                        color:
+                            "#7a8495",
+
+                        padding:
+                            8
+                    }
+                }
+            }
+        };
+    }
+
+
+    function createXAxis()
+    {
+        return {
+            border:
+            {
+                display:
+                    false
+            },
+
+            grid:
+            {
+                display:
+                    false
+            },
+
+            ticks:
+            {
+                color:
+                    "#7a8495",
+
+                maxRotation:
+                    0,
+
+                autoSkip:
+                    true,
+
+                maxTicksLimit:
+                    7,
+
+                padding:
+                    8
+            }
+        };
+    }
+
+
+    // ============================================================
+    // DESTROY OLD CHARTS
+    // ============================================================
+
+    function destroyCharts()
+    {
+        if (stressChart)
+        {
+            stressChart.destroy();
+
+            stressChart =
+                null;
+        }
+
+
+        if (sleepChart)
+        {
+            sleepChart.destroy();
+
+            sleepChart =
+                null;
+        }
+
+
+        if (activityChart)
+        {
+            activityChart.destroy();
+
+            activityChart =
+                null;
+        }
+    }
+
+
+    // ============================================================
+    // MODEL PERFORMANCE
+    // ============================================================
+
+    function displayPerformance(
+        performance)
+    {
+        const container =
+            document.getElementById(
+                "performanceMetrics");
+
+
+        container.replaceChildren();
+
+
+        if (!performance)
+        {
+            container.textContent =
+                "Model performance information is unavailable.";
+
+            return;
+        }
+
+
+        const table =
+            document.createElement(
+                "table");
+
+
+        table.className =
+            "performance-table";
+
+
+        const header =
+            document.createElement(
+                "tr");
+
+
+        [
+            "Metric",
+            "Stress Model",
+            "Sleep Model"
+
+        ].forEach(
+            label =>
+            {
+                const th =
+                    document.createElement(
+                        "th");
+
+
+                th.textContent =
+                    label;
+
+
+                header.appendChild(
+                    th);
+            });
+
+
+        table.appendChild(
+            header);
+
+
+        const rows =
+        [
+            [
+                "Evaluation Samples",
+                "n"
+            ],
+
+            [
+                "Mean Absolute Error",
+                "mae"
+            ],
+
+            [
+                "Baseline MAE",
+                "baseline_mae"
+            ],
+
+            [
+                "R² Score",
+                "r2"
+            ]
+        ];
+
+
+        for (const [label, key]
+            of rows)
+        {
+            const row =
+                document.createElement(
+                    "tr");
+
+
+            appendCell(
+                row,
+                label);
+
+
+            appendCell(
+                row,
+                formatMetric(
+                    performance
+                        .stress?.[key]));
+
+
+            appendCell(
+                row,
+                formatMetric(
+                    performance
+                        .sleep?.[key]));
+
+
+            table.appendChild(
+                row);
+        }
+
+
+        container.appendChild(
+            table);
+    }
+
+
+    // ============================================================
+    // HELPERS
+    // ============================================================
+
+    function appendCell(
+        row,
+        value)
+    {
+        const cell =
+            document.createElement(
+                "td");
+
+
+        cell.textContent =
+            value;
+
+
+        row.appendChild(
+            cell);
+    }
+
+
+    function formatMetric(
+        value)
+    {
+        if (value === undefined ||
+            value === null)
+        {
+            return "N/A";
+        }
+
+
+        if (typeof value === "number" &&
+            !Number.isInteger(value))
+        {
+            return value.toFixed(3);
+        }
+
+
+        return String(value);
+    }
+
+
+    function formatWholeNumber(
+        value)
+    {
+        const number =
+            Number(value);
+
+
+        if (!Number.isFinite(number))
+        {
+            return "N/A";
+        }
+
+
+        return Math.round(
+            number
+        ).toLocaleString();
+    }
+
+
+    function formatChartDate(
+        value)
+    {
+        const date =
+            new Date(value);
+
+
+        return date.toLocaleString(
+            [],
+            {
+                month:
+                    "short",
+
+                day:
+                    "numeric",
+
+                hour:
+                    "numeric",
+
+                minute:
+                    "2-digit"
+            });
+    }
+
+
+    function formatTableDate(
+        value)
+    {
+        const date =
+            new Date(value);
+
+
+        return date.toLocaleString(
+            [],
+            {
+                year:
+                    "numeric",
+
+                month:
+                    "short",
+
+                day:
+                    "numeric",
+
+                hour:
+                    "numeric",
+
+                minute:
+                    "2-digit"
+            });
+    }
+
+
+    // ============================================================
+    // INITIAL PAGE LOAD
+    // ============================================================
+
+    loadHistory();
+
+</script>

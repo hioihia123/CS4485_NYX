@@ -1,0 +1,443 @@
+﻿
+:root {
+    --nyx-bg: #f5f7fb;
+    --nyx-card: #ffffff;
+    --nyx-border: #e5e9f0;
+    --nyx-text: #172033;
+    --nyx-muted: #6b7280;
+    --nyx-primary: #4f67d9;
+    --nyx-primary-dark: #354bb5;
+    --nyx-success: #14855f;
+    --nyx-danger: #b42318;
+    --nyx-warning-bg: #fff9eb;
+    --nyx-warning-border: #f0dda6;
+}
+
+body {
+    background: var(--nyx-bg);
+}
+
+.nyx-dashboard {
+    max-width: 1240px;
+    margin: 34px auto 70px;
+    padding: 0 22px;
+    color: var(--nyx-text);
+}
+
+.nyx-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+    .nyx-header h1 {
+        margin: 0 0 7px;
+        font-size: 32px;
+        font-weight: 750;
+        letter-spacing: -0.7px;
+    }
+
+    .nyx-header p {
+        margin: 0;
+    }
+
+.nyx-muted {
+    color: var(--nyx-muted);
+    line-height: 1.65;
+}
+
+.nyx-card {
+    background: var(--nyx-card);
+    border: 1px solid var(--nyx-border);
+    border-radius: 18px;
+    padding: 26px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03), 0 6px 22px rgba(16, 24, 40, 0.04);
+}
+
+    .nyx-card h2 {
+        margin: 0 0 7px;
+        font-size: 21px;
+        letter-spacing: -0.2px;
+    }
+
+.nyx-section-title {
+    margin-top: 28px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--nyx-border);
+    font-size: 14px;
+    font-weight: 700;
+    color: #3e4b64;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.nyx-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 19px;
+}
+
+.nyx-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+    .nyx-field label {
+        font-size: 14px;
+        font-weight: 650;
+    }
+
+    .nyx-field small {
+        font-size: 12px;
+        color: var(--nyx-muted);
+    }
+
+    .nyx-field input {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #d5dae3;
+        border-radius: 10px;
+        padding: 12px 13px;
+        font-size: 15px;
+        background: #fbfcfe;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+        .nyx-field input:focus {
+            outline: none;
+            border-color: #7689e7;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(79, 103, 217, 0.10);
+        }
+
+.nyx-actions {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.nyx-button {
+    border: none;
+    border-radius: 10px;
+    padding: 13px 20px;
+    font-size: 15px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+    .nyx-button:hover:not(:disabled) {
+        transform: translateY(-1px);
+    }
+
+.nyx-primary {
+    color: #ffffff;
+    background: var(--nyx-primary);
+    box-shadow: 0 4px 12px rgba(79, 103, 217, 0.20);
+}
+
+    .nyx-primary:hover:not(:disabled) {
+        background: var(--nyx-primary-dark);
+    }
+
+    .nyx-primary:disabled {
+        opacity: 0.6;
+        cursor: wait;
+    }
+
+.nyx-warning {
+    margin-top: 20px;
+    background: var(--nyx-warning-bg);
+    border: 1px solid var(--nyx-warning-border);
+    border-radius: 11px;
+    padding: 14px 16px;
+    line-height: 1.6;
+    font-size: 13px;
+}
+
+.nyx-error,
+.nyx-success {
+    display: none;
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    line-height: 1.55;
+}
+
+.nyx-error {
+    color: var(--nyx-danger);
+    background: #fff4f2;
+    border: 1px solid #f4c5be;
+    white-space: pre-wrap;
+}
+
+.nyx-success {
+    color: #166b4d;
+    background: #effaf5;
+    border: 1px solid #b9e3d0;
+}
+
+.nyx-results {
+    display: none;
+}
+
+/* ============================================================
+       CURRENT RESULT CARDS
+       ============================================================ */
+
+.nyx-score-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 22px;
+}
+
+.nyx-score {
+    border: 1px solid var(--nyx-border);
+    border-radius: 15px;
+    padding: 23px;
+    background: linear-gradient( 145deg, #fafbff 0%, #f4f7ff 100% );
+}
+
+.nyx-score-label {
+    color: var(--nyx-muted);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.nyx-score-value {
+    font-size: 36px;
+    font-weight: 760;
+    letter-spacing: -1px;
+    color: #304a9c;
+}
+
+.nyx-explanation {
+    margin-top: 18px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* ============================================================
+       ANALYTICS KPI CARDS
+       ============================================================ */
+
+.nyx-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 22px;
+    margin-bottom: 30px;
+}
+
+.nyx-kpi {
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid var(--nyx-border);
+    background: #fbfcff;
+}
+
+.nyx-kpi-label {
+    color: var(--nyx-muted);
+    font-size: 12px;
+    font-weight: 650;
+    text-transform: uppercase;
+    letter-spacing: 0.45px;
+    margin-bottom: 10px;
+}
+
+.nyx-kpi-value {
+    font-size: 28px;
+    font-weight: 750;
+    letter-spacing: -0.6px;
+}
+
+.nyx-kpi-subtitle {
+    margin-top: 7px;
+    color: var(--nyx-muted);
+    font-size: 12px;
+}
+
+/* ============================================================
+       CHARTS
+       ============================================================ */
+
+.nyx-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.nyx-chart-card {
+    border: 1px solid var(--nyx-border);
+    border-radius: 16px;
+    padding: 20px;
+    background: #ffffff;
+}
+
+.nyx-chart-card-wide {
+    grid-column: 1 / -1;
+}
+
+.nyx-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.nyx-chart-title {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.nyx-chart-description {
+    margin: 0;
+    color: var(--nyx-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.nyx-chart-badge {
+    flex-shrink: 0;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f1f4ff;
+    color: #465bb8;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.nyx-chart-container {
+    position: relative;
+    width: 100%;
+    height: 330px;
+}
+
+.nyx-chart-card-wide .nyx-chart-container {
+    height: 360px;
+}
+
+/* ============================================================
+       HISTORY TABLE
+       ============================================================ */
+
+.nyx-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--nyx-border);
+    border-radius: 13px;
+    margin-top: 18px;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+    .history-table th {
+        padding: 13px 15px;
+        background: #f8f9fc;
+        text-align: left;
+        color: #536074;
+        font-weight: 700;
+        border-bottom: 1px solid var(--nyx-border);
+        white-space: nowrap;
+    }
+
+    .history-table td {
+        padding: 13px 15px;
+        border-bottom: 1px solid #eef0f4;
+        white-space: nowrap;
+    }
+
+    .history-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .history-table tbody tr:hover {
+        background: #fafbfe;
+    }
+
+/* ============================================================
+       MODEL PERFORMANCE
+       ============================================================ */
+
+.performance-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 14px;
+}
+
+    .performance-table th,
+    .performance-table td {
+        padding: 12px;
+        border-bottom: 1px solid var(--nyx-border);
+        text-align: left;
+    }
+
+    .performance-table th {
+        color: #556176;
+    }
+
+@@media (max-width: 950px) {
+    .nyx-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .nyx-form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@@media (max-width: 760px) {
+    .nyx-chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nyx-chart-card-wide {
+        grid-column: auto;
+    }
+
+        .nyx-chart-container,
+        .nyx-chart-card-wide .nyx-chart-container {
+            height: 310px;
+        }
+
+    .nyx-score-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@@media (max-width: 560px) {
+    .nyx-dashboard {
+        padding: 0 12px;
+        margin-top: 20px;
+    }
+
+    .nyx-card {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    .nyx-form-grid,
+    .nyx-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nyx-header h1 {
+        font-size: 27px;
+    }
+}

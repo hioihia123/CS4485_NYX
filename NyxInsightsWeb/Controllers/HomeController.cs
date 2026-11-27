@@ -15,25 +15,33 @@ namespace NyxInsightsWeb.Controllers
             _logger = logger;
         }
 
-	[Authorize]
+	    [Authorize]
         public IActionResult Index()
         {
-
             return View();
         }
 
-	[AllowAnonymous]
-	public IActionResult Error()
-	{
-	    var error = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-	    _logger.LogError(
-        	error?.Error,
-       		"Unhandled exception at {Path}",
-        	error?.Path
-    	    );
+        [AllowAnonymous]
+        public IActionResult Landing()
+        {
+            bool val1 = (HttpContext.User != null) && HttpContext.User.Identity.IsAuthenticated;
+            ViewData["Auth"] = !val1;
+            return View();
+        }
 
-    return StatusCode(500,
-        "An internal server error occurred. Check Azure logs.");
-	}
-    }
+
+	    [AllowAnonymous]
+	    public IActionResult Error()
+	    {
+	        var error = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+	        _logger.LogError(
+        	    error?.Error,
+       		    "Unhandled exception at {Path}",
+        	    error?.Path
+    	        );
+
+        return StatusCode(500,
+            "An internal server error occurred. Check Azure logs.");
+	    }
+        }
 }
