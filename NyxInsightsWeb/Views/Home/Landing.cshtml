@@ -5,13 +5,16 @@
     
 }
 
-<div style="font-size: 24px;">
-    This is the landing page!!
+<div class="landing">
+    @if (ViewBag.Auth)
+    {
+        <a href="/Home/Index">Dashboard</a>
+    }
+
+    <div class="landing-ad-box">
+        <div class="nyx-default-txt" style="font-size: 36px;">Sleep advice, personalized for</div>
+        <div class="nyx-default-txt" style="font-size: 64px;">Your Needs</div>
+    </div>
+    
 </div>
 
-@if (ViewBag.Auth)
-{
-    <a href="/Identity/Account/Login">Login</a>
-}
-
-<a href="/Home/Index">Dashboard</a>

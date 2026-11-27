@@ -18,6 +18,8 @@ namespace NyxInsightsWeb.Controllers
 	    [Authorize]
         public IActionResult Index()
         {
+            bool val1 = (HttpContext.User != null) && HttpContext.User.Identity.IsAuthenticated;
+            ViewData["Auth"] = val1;
             return View();
         }
 
@@ -25,7 +27,7 @@ namespace NyxInsightsWeb.Controllers
         public IActionResult Landing()
         {
             bool val1 = (HttpContext.User != null) && HttpContext.User.Identity.IsAuthenticated;
-            ViewData["Auth"] = !val1;
+            ViewData["Auth"] = val1;
             return View();
         }
 

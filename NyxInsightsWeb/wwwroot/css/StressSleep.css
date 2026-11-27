@@ -19,7 +19,7 @@ body {
 
 .nyx-dashboard {
     max-width: 1240px;
-    margin: 34px auto 70px;
+/*    margin: 34px auto 70px;*/
     padding: 0 22px;
     color: var(--nyx-text);
 }

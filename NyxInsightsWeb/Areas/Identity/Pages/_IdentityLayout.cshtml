@@ -17,7 +17,7 @@
 
     <style>
         body {
-            background-color: lightgrey !important;
+            background: linear-gradient(180deg, #6E90B3 0%, #202D3A 100%) !important;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -58,13 +58,20 @@
 
 <body>
     <header>
-        <nav class="identity-navbar">
-            <div class="container d-flex align-items-center">
-                <a class="identity-brand" href="/">
-                    NyxInsightsWeb
-                </a>
-
-                <div class="ms-auto">
+        <nav class="nyx-navbar navbar navbar-expand-sm navbar-toggleable-sm navbar-light">
+            <div class="container-fluid">
+                <div class="nyx-nav-txt">Nyx Insights</div>
+                @if (ViewBag.Auth != null)
+                {
+                    @if (!ViewBag.Auth)
+                    {
+                        <a asp-area="" asp-controller="Home" asp-action="Index" class="nyx-nav-txt" style="padding-right: 80px;">Login</a>
+                    }
+                    else
+                    {
+                        <a href="/Identity/Account/Logout" class="nyx-nav-txt" style="padding-right: 80px;">Log-out</a>
+                    }
+                }
             </div>
         </nav>
     </header>

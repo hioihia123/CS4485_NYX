@@ -30,16 +30,15 @@ body {
 }
 
 .nyx-navbar {
-    height: 90px;
-    background: gray;
+    height: 65px;
+    background: #161C22;
     margin: 0;
 }
 
 .nyx-nav-txt {
-    height: 56px;
     color: white !important;
     font-family: "Inter", sans-serif;
-    font-size: 30px;
+    font-size: 22px;
     font-weight: bold;
     text-decoration: none;
 }
@@ -147,13 +146,35 @@ body {
     line-height: normal;
 }
 
+.landing {
+    padding-top: 130px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 70px;
+}
+
+.landing-ad-box {
+    width: 1067px;
+    height: 396px;
+    border-radius: 20px;
+    border: 2px solid #283F57;
+/*    opacity: 0.7;*/
+    background: url(/images/yavorzhelyazkov-star-trails-8306233.jpg) lightgray 0px -236.067px / 105.717% 188.67% no-repeat;
+    box-shadow: 8px 12px 8px 0 rgba(30, 30, 30, 0.50);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+}
 
 .nyx-home-body {
-    margin-top: 90px;
-    margin-right: 90px;
+    padding-top: 90px;
     display: flex;
     flex-direction: column;
     gap: 100px;
+    align-items: center;
 }
 
 .hsection {
@@ -163,17 +184,16 @@ body {
 }
 
 .hsection-head {
-    height: 44px;
-    font-family: 'Inter', sans-serif;
-    font-style: normal;
+    color: #FFF;
     font-size: 32px;
-    line-height: 44px;
-    color: #000000;
-/*    align-self: stretch;*/
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
 }
 
 .hsection-body {
-    width: 1220px;
-    height: 320px;
+    width: 1040px;
+    height: 415px;
+    border-radius: 7px;
     background: white;
 }

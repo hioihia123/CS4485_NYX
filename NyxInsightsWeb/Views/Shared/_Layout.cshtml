@@ -12,11 +12,21 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 </head>
-<body style="background: lightgrey;">
+<body style="background: #202D3A;">
     <header>
         <nav class="nyx-navbar navbar navbar-expand-sm navbar-toggleable-sm navbar-light">
             <div class="container-fluid">
-                <a class="nyx-nav-txt" asp-area="" asp-controller="Home" asp-action="Dashboard">Nyx Insights</a>
+                <div class="nyx-nav-txt">Nyx Insights</div>
+                @if (ViewBag.Auth != null)
+                {
+                    @if (!ViewBag.Auth)
+                    {
+                        <a asp-area="" asp-controller="Home" asp-action="Index" class="nyx-nav-txt" style="padding-right: 80px;">Login</a>
+                    } else
+                    {
+                        <a href="/Identity/Account/Logout" class="nyx-nav-txt" style="padding-right: 80px;">Log-out</a>
+                    }
+                }
             </div>
         </nav>
     </header>
