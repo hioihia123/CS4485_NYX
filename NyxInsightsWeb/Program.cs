@@ -7,12 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient<AzureMlPredictionService>();
 builder.Services.AddScoped<FoundryAgentService>();
 builder.Services.AddScoped<GoogleHealthAuthService>();
+builder.Services.AddScoped<GoogleHealthDataService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//Identity
 builder.Services
     .AddDefaultIdentity<IdentityUser>(options =>
     {
@@ -22,7 +22,6 @@ builder.Services
 
 builder.Services.AddRazorPages();
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDistributedMemoryCache();
@@ -36,11 +35,9 @@ builder.Services.AddSession(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

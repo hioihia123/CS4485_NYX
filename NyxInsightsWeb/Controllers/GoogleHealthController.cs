@@ -8,6 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
@@ -29,18 +30,21 @@ namespace NyxInsightsWeb.Controllers
         private readonly ApplicationDbContext _dbContext;
         private readonly IDataProtector _tokenProtector;
         private readonly IConfiguration _configuration;
+        private readonly GoogleHealthDataService _dataService;
 
         public GoogleHealthController(
             GoogleHealthAuthService authService,
             IHttpClientFactory httpClientFactory,
             ApplicationDbContext dbContext,
             IDataProtectionProvider dataProtectionProvider,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            GoogleHealthDataService dataService)
         {
             _authService = authService;
             _httpClientFactory = httpClientFactory;
             _dbContext = dbContext;
             _configuration = configuration;
+            _dataService = dataService; 
             _tokenProtector = dataProtectionProvider.CreateProtector(
                 "NyxInsights.GoogleHealthTokens.v1");
         }
@@ -532,27 +536,89 @@ namespace NyxInsightsWeb.Controllers
         }
 
         [HttpGet("test-daily-steps")]
-        public async Task<IActionResult> TestDailySteps([FromQuery] string? date)
+        public async Task<IActionResult> TestDailySteps([FromQuery] string date)
         {
-            if (!DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture,
-                DateTimeStyles.None, out DateOnly selectedDate) ||
-                selectedDate == DateOnly.MaxValue)
-                return BadRequest("Use a valid date in YYYY-MM-DD format.");
+            if (!DateOnly.TryParseExact(
+                    date,
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var parsedDate))
+            {
+                return BadRequest(new
+                {
+                    error = "Date must be in yyyy-MM-dd format."
+                });
+            }
 
-            var (_, token, error) = await GetValidAccessTokenAsync();
-            if (error != null) return error;
+            var tokenResult = await GetValidAccessTokenAsync();
 
-            string url = "https://health.googleapis.com/v4/users/me/dataTypes/steps/dataPoints:dailyRollUp";
-            string json = JsonSerializer.Serialize(
-                BuildDailyRollupPayload(selectedDate, selectedDate.AddDays(1), 1));
+            if (tokenResult.Error != null)
+            {
+                return tokenResult.Error;
+            }
 
-            using var response = await SendGoogleRequestAsync(HttpMethod.Post, url, token!, json);
-            string body = await response.Content.ReadAsStringAsync();
+            var accessToken = tokenResult.Token;
+
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return Unauthorized(new
+                {
+                    error = "Google Health is not connected."
+                });
+            }
+
+            var startDate = parsedDate;
+            var endDate = parsedDate.AddDays(1);
+
+            var payload = BuildDailyRollupPayload(
+                startDate,
+                endDate,
+                1);
+
+            var response = await SendGoogleRequestAsync(
+                HttpMethod.Post,
+                "https://health.googleapis.com/v4/users/me/dataTypes/steps/dataPoints:dailyRollUp",
+                accessToken,
+                JsonSerializer.Serialize(payload));
 
             if (!response.IsSuccessStatusCode)
-                return StatusCode((int)response.StatusCode, "Google Health daily steps request failed.");
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
 
-            return Content(body, "application/json");
+                return StatusCode((int)response.StatusCode, new
+                {
+                    error = "Google Health steps request failed.",
+                    details = errorBody
+                });
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+
+            long steps = 0;
+
+            if (root.TryGetProperty("rollupDataPoints", out var rollupDataPoints))
+            {
+                foreach (var rollupPoint in rollupDataPoints.EnumerateArray())
+                {
+                    if (rollupPoint.TryGetProperty("steps", out var stepsElement) &&
+                        stepsElement.TryGetProperty("countSum", out var countSum))
+                    {
+                        steps += long.Parse(
+                            countSum.GetString() ?? "0",
+                            CultureInfo.InvariantCulture);
+                    }
+                }
+            }
+
+            return Ok(new
+            {
+                date = date,
+                steps = steps
+            });
         }
 
         [HttpGet("test-steps-history")]
@@ -647,19 +713,1045 @@ namespace NyxInsightsWeb.Controllers
 
             string startDate = selectedDate.ToString("yyyy-MM-dd");
             string endDate = selectedDate.AddDays(1).ToString("yyyy-MM-dd");
+
             string filter = $"heart_rate.sample_time.civil_time >= \"{startDate}\" AND " +
                             $"heart_rate.sample_time.civil_time < \"{endDate}\"";
 
             string url = "https://health.googleapis.com/v4/users/me/dataTypes/heart-rate/dataPoints" +
-                         "?pageSize=100&filter=" + Uri.EscapeDataString(filter);
+                        "?pageSize=100&filter=" + Uri.EscapeDataString(filter);
 
             using var response = await SendGoogleRequestAsync(HttpMethod.Get, url, token!);
             string body = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
-                return StatusCode((int)response.StatusCode, "Google Health heart-rate request failed.");
+                return StatusCode(
+                    (int)response.StatusCode,
+                    "Google Health heart-rate request failed.");
+
+            using JsonDocument doc = JsonDocument.Parse(body);
+
+            double bpmSum = 0;
+            int bpmCount = 0;
+
+            if (doc.RootElement.TryGetProperty("dataPoints", out JsonElement dataPoints))
+            {
+                foreach (JsonElement dataPoint in dataPoints.EnumerateArray())
+                {
+                    if (!dataPoint.TryGetProperty("heartRate", out JsonElement heartRate))
+                        continue;
+
+                    if (!heartRate.TryGetProperty("beatsPerMinute", out JsonElement bpmElement))
+                        continue;
+
+                    string? bpmString = bpmElement.GetString();
+
+                    if (double.TryParse(
+                            bpmString,
+                            NumberStyles.Float,
+                            CultureInfo.InvariantCulture,
+                            out double bpm))
+                    {
+                        bpmSum += bpm;
+                        bpmCount++;
+                    }
+                }
+            }
+
+            double? averageBpm = bpmCount > 0
+                ? bpmSum / bpmCount
+                : null;
+
+            return Ok(new
+            {
+                date = startDate,
+                bpm = averageBpm,
+                samples = bpmCount
+            });
+        }
+
+        [HttpGet("test-daily-calories")]
+        public async Task<IActionResult> TestDailyCalories([FromQuery] string date)
+        {
+            if (!DateOnly.TryParseExact(
+                    date,
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var parsedDate))
+            {
+                return BadRequest(new
+                {
+                    error = "Date must be in yyyy-MM-dd format."
+                });
+            }
+
+            var tokenResult = await GetValidAccessTokenAsync();
+
+            if (tokenResult.Error != null)
+            {
+                return tokenResult.Error;
+            }
+
+            var accessToken = tokenResult.Token;
+
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return Unauthorized(new
+                {
+                    error = "Google Health is not connected."
+                });
+            }
+
+            var startDate = parsedDate;
+            var endDate = parsedDate.AddDays(1);
+
+            var payload = BuildDailyRollupPayload(
+                startDate,
+                endDate,
+                1);
+
+            var response = await SendGoogleRequestAsync(
+                HttpMethod.Post,
+                "https://health.googleapis.com/v4/users/me/dataTypes/total-calories/dataPoints:dailyRollUp",
+                accessToken,
+                JsonSerializer.Serialize(payload));
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+
+                return StatusCode((int)response.StatusCode, new
+                {
+                    error = "Google Health calories request failed.",
+                    details = errorBody
+                });
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+
+            double calories = 0;
+
+            if (root.TryGetProperty("rollupDataPoints", out var rollupDataPoints))
+            {
+                foreach (var rollupPoint in rollupDataPoints.EnumerateArray())
+                {
+                    if (rollupPoint.TryGetProperty(
+                            "totalCalories",
+                            out var totalCalories))
+                    {
+                        if (totalCalories.TryGetProperty(
+                                "kcalSum",
+                                out var kcalSum))
+                        {
+                            calories += kcalSum.GetDouble();
+                        }
+                    }
+                }
+            }
+
+            return Ok(new
+            {
+                date = date,
+                calories = calories
+            });
+        }
+
+        [HttpGet("test-daily-activity")]
+        public async Task<IActionResult> TestDailyActivity([FromQuery] string? date)
+        {
+            if (!DateOnly.TryParseExact(
+                    date,
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateOnly selectedDate))
+            {
+                return BadRequest("Use a valid date in YYYY-MM-DD format.");
+            }
+
+            var (_, token, error) = await GetValidAccessTokenAsync();
+            if (error != null)
+                return error;
+
+            string url =
+                "https://health.googleapis.com/v4/users/me/dataTypes/active-minutes/dataPoints:dailyRollUp";
+
+            var payload = new
+            {
+                range = new
+                {
+                    start = new
+                    {
+                        date = new
+                        {
+                            year = selectedDate.Year,
+                            month = selectedDate.Month,
+                            day = selectedDate.Day
+                        }
+                    },
+                    end = new
+                    {
+                        date = new
+                        {
+                            year = selectedDate.AddDays(1).Year,
+                            month = selectedDate.AddDays(1).Month,
+                            day = selectedDate.AddDays(1).Day
+                        }
+                    }
+                },
+                windowSizeDays = 1,
+                pageSize = 1
+            };
+
+            string json = JsonSerializer.Serialize(payload);
+
+            using var response = await SendGoogleRequestAsync(
+                HttpMethod.Post,
+                url,
+                token!,
+                json);
+
+            string body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode(
+                    (int)response.StatusCode,
+                    $"Google Health daily activity request failed: {body}");
+            }
 
             return Content(body, "application/json");
         }
+
+        [HttpGet("test-daily-heart-rate-zones")]
+        public async Task<IActionResult> TestDailyHeartRateZones([FromQuery] string date)
+        {
+            if (!DateOnly.TryParseExact(
+                    date,
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var parsedDate))
+            {
+                return BadRequest(new
+                {
+                    error = "Date must be in yyyy-MM-dd format."
+                });
+            }
+
+            var tokenResult = await GetValidAccessTokenAsync();
+
+            if (tokenResult.Error != null)
+            {
+                return tokenResult.Error;
+            }
+
+            var accessToken = tokenResult.Token;
+
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                return Unauthorized(new
+                {
+                    error = "Google Health is not connected."
+                });
+            }
+
+            var startDate = parsedDate;
+            var endDate = parsedDate.AddDays(1);
+
+            var payload = BuildDailyRollupPayload(
+                startDate,
+                endDate,
+                1);
+
+            var response = await SendGoogleRequestAsync(
+                HttpMethod.Post,
+                "https://health.googleapis.com/v4/users/me/dataTypes/time-in-heart-rate-zone/dataPoints:dailyRollUp",
+                accessToken,
+                JsonSerializer.Serialize(payload));
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+
+                return StatusCode((int)response.StatusCode, new
+                {
+                    error = "Google Health heart-rate-zone request failed.",
+                    details = errorBody
+                });
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            using var document = JsonDocument.Parse(json);
+            var root = document.RootElement;
+
+            double lightMinutes = 0;
+            double moderateMinutes = 0;
+            double vigorousMinutes = 0;
+
+            if (root.TryGetProperty("rollupDataPoints", out var rollupDataPoints))
+            {
+                foreach (var rollupPoint in rollupDataPoints.EnumerateArray())
+                {
+                    if (!rollupPoint.TryGetProperty(
+                            "timeInHeartRateZone",
+                            out var timeInHeartRateZone))
+                    {
+                        continue;
+                    }
+
+                    if (!timeInHeartRateZone.TryGetProperty(
+                            "timeInHeartRateZones",
+                            out var zones))
+                    {
+                        continue;
+                    }
+
+                    foreach (var zone in zones.EnumerateArray())
+                    {
+                        var zoneName = zone.GetProperty("heartRateZone").GetString();
+                        var duration = zone.GetProperty("duration").GetString();
+
+                        if (string.IsNullOrEmpty(zoneName) ||
+                            string.IsNullOrEmpty(duration))
+                        {
+                            continue;
+                        }
+
+                        var secondsString = duration.TrimEnd('s');
+
+                        if (!double.TryParse(
+                                secondsString,
+                                NumberStyles.Float,
+                                CultureInfo.InvariantCulture,
+                                out var seconds))
+                        {
+                            continue;
+                        }
+
+                        var minutes = seconds / 60.0;
+
+                        switch (zoneName)
+                        {
+                            case "LIGHT":
+                                lightMinutes += minutes;
+                                break;
+
+                            case "MODERATE":
+                                moderateMinutes += minutes;
+                                break;
+
+                            case "VIGOROUS":
+                                vigorousMinutes += minutes;
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return Ok(new
+            {
+                date = date,
+                minutes_in_default_zone_1 = lightMinutes,
+                minutes_in_default_zone_2 = moderateMinutes,
+                minutes_in_default_zone_3 = vigorousMinutes
+            });
+        }
+
+        [HttpGet("test-sleep")]
+        public async Task<IActionResult> TestSleep([FromQuery] string? date)
+        {
+            if (!DateOnly.TryParseExact(
+                    date,
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateOnly selectedDate))
+            {
+                return BadRequest("Use a valid date in YYYY-MM-DD format.");
+            }
+
+            var (_, token, error) = await GetValidAccessTokenAsync();
+            if (error != null)
+                return error;
+
+            DateOnly nextDate = selectedDate.AddDays(1);
+
+            string filter =
+                $"sleep.interval.civil_end_time >= \"{selectedDate:yyyy-MM-dd}\" " +
+                $"AND sleep.interval.civil_end_time < \"{nextDate:yyyy-MM-dd}\"";
+
+            string url =
+                "https://health.googleapis.com/v4/users/me/dataTypes/sleep/dataPoints:reconcile" +
+                $"?filter={Uri.EscapeDataString(filter)}&pageSize=25";
+
+            using var response = await SendGoogleRequestAsync(
+                HttpMethod.Get,
+                url,
+                token!);
+
+            string body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode(
+                    (int)response.StatusCode,
+                    $"Google Health sleep request failed: {body}");
+            }
+
+            using JsonDocument doc = JsonDocument.Parse(body);
+
+            double totalMinutesAsleep = 0;
+            double totalMinutesInSleepPeriod = 0;
+            int sleepRecords = 0;
+
+            if (doc.RootElement.TryGetProperty("dataPoints", out JsonElement dataPoints))
+            {
+                foreach (JsonElement dataPoint in dataPoints.EnumerateArray())
+                {
+                    if (!dataPoint.TryGetProperty("sleep", out JsonElement sleep))
+                        continue;
+
+                    if (!sleep.TryGetProperty("summary", out JsonElement summary))
+                        continue;
+
+                    if (!summary.TryGetProperty(
+                            "minutesAsleep",
+                            out JsonElement asleepElement))
+                        continue;
+
+                    if (!summary.TryGetProperty(
+                            "minutesInSleepPeriod",
+                            out JsonElement periodElement))
+                        continue;
+
+                    if (!double.TryParse(
+                            asleepElement.GetString(),
+                            NumberStyles.Float,
+                            CultureInfo.InvariantCulture,
+                            out double minutesAsleep))
+                    {
+                        continue;
+                    }
+
+                    if (!double.TryParse(
+                            periodElement.GetString(),
+                            NumberStyles.Float,
+                            CultureInfo.InvariantCulture,
+                            out double minutesInSleepPeriod))
+                    {
+                        continue;
+                    }
+
+                    if (minutesInSleepPeriod <= 0)
+                        continue;
+
+                    totalMinutesAsleep += minutesAsleep;
+                    totalMinutesInSleepPeriod += minutesInSleepPeriod;
+                    sleepRecords++;
+                }
+            }
+
+            double? sleepEfficiency = totalMinutesInSleepPeriod > 0
+                ? (totalMinutesAsleep / totalMinutesInSleepPeriod) * 100.0
+                : null;
+
+            return Ok(new
+            {
+                date = selectedDate.ToString("yyyy-MM-dd"),
+                sleep_efficiency = sleepEfficiency,
+                minutes_asleep = totalMinutesAsleep,
+                minutes_in_sleep_period = totalMinutesInSleepPeriod,
+                sleep_records = sleepRecords
+            });
+        }
+
+        
+        [HttpGet("test-daily-activity-level")]
+        public async Task<IActionResult> TestDailyActivityLevel(
+            [FromQuery] string date)
+        {
+            if (!DateOnly.TryParse(
+                    date,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateOnly selectedDate))
+            {
+                return BadRequest(new
+                {
+                    error = "Invalid date. Use YYYY-MM-DD."
+                });
+            }
+
+            var (account, token, error) =
+                await GetValidAccessTokenAsync();
+
+            if (error != null)
+                return error;
+
+            DateOnly nextDate =
+                selectedDate.AddDays(1);
+
+            string filter =
+                $"activity_level.interval.civil_start_time >= \"{selectedDate:yyyy-MM-dd}\" " +
+                $"AND activity_level.interval.civil_start_time < \"{nextDate:yyyy-MM-dd}\"";
+
+            string url =
+                "https://health.googleapis.com/v4/users/me/" +
+                "dataTypes/activity-level/dataPoints" +
+                $"?filter={Uri.EscapeDataString(filter)}" +
+                "&pageSize=10000";
+
+            using var response =
+                await SendGoogleRequestAsync(
+                    HttpMethod.Get,
+                    url,
+                    token!);
+
+            string body =
+                await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode(
+                    (int)response.StatusCode,
+                    new
+                    {
+                        error =
+                            "Google Health activity-level request failed.",
+                        details = body
+                    });
+            }
+
+            return Content(
+                body,
+                "application/json");
+        }
+
+        [HttpGet("test-daily-active-minutes")]
+        public async Task<IActionResult> TestDailyActiveMinutes(
+            [FromQuery] string? date)
+        {
+            if (!DateOnly.TryParseExact(
+                    date,
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateOnly selectedDate))
+            {
+                return BadRequest("Use a valid date in YYYY-MM-DD format.");
+            }
+
+            var (_, token, error) = await GetValidAccessTokenAsync();
+
+            if (error != null)
+                return error;
+
+            string url =
+                "https://health.googleapis.com/v4/users/me/dataTypes/active-minutes/dataPoints:dailyRollUp";
+
+            var payload = new
+            {
+                range = new
+                {
+                    start = new
+                    {
+                        date = new
+                        {
+                            year = selectedDate.Year,
+                            month = selectedDate.Month,
+                            day = selectedDate.Day
+                        }
+                    },
+                    end = new
+                    {
+                        date = new
+                        {
+                            year = selectedDate.AddDays(1).Year,
+                            month = selectedDate.AddDays(1).Month,
+                            day = selectedDate.AddDays(1).Day
+                        }
+                    }
+                },
+                windowSizeDays = 1,
+                pageSize = 1
+            };
+
+            string json = JsonSerializer.Serialize(payload);
+
+            using var response = await SendGoogleRequestAsync(
+                HttpMethod.Post,
+                url,
+                token!,
+                json);
+
+            string body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return StatusCode(
+                    (int)response.StatusCode,
+                    new
+                    {
+                        error = "Google Health daily active-minutes request failed.",
+                        details = body
+                    });
+            }
+
+            long lightlyActiveMinutes = 0;
+            long moderatelyActiveMinutes = 0;
+            long veryActiveMinutes = 0;
+
+            try
+            {
+                using var document = JsonDocument.Parse(body);
+
+                if (document.RootElement.TryGetProperty(
+                        "rollupDataPoints",
+                        out JsonElement rollupPoints) &&
+                    rollupPoints.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (JsonElement point in rollupPoints.EnumerateArray())
+                    {
+                        if (!point.TryGetProperty(
+                                "activeMinutes",
+                                out JsonElement activeMinutes))
+                            continue;
+
+                        if (!activeMinutes.TryGetProperty(
+                                "activeMinutesRollupByActivityLevel",
+                                out JsonElement activityLevels) ||
+                            activityLevels.ValueKind != JsonValueKind.Array)
+                            continue;
+
+                        foreach (JsonElement activityLevel in activityLevels.EnumerateArray())
+                        {
+                            if (!activityLevel.TryGetProperty(
+                                    "activityLevel",
+                                    out JsonElement levelElement))
+                                continue;
+
+                            if (!activityLevel.TryGetProperty(
+                                    "activeMinutesSum",
+                                    out JsonElement minutesElement))
+                                continue;
+
+                            string? level = levelElement.GetString();
+
+                            if (!long.TryParse(
+                                    minutesElement.ToString(),
+                                    out long minutes) ||
+                                minutes < 0)
+                                continue;
+
+                            switch (level)
+                            {
+                                case "LIGHT":
+                                    lightlyActiveMinutes += minutes;
+                                    break;
+
+                                case "MODERATE":
+                                    moderatelyActiveMinutes += minutes;
+                                    break;
+
+                                case "VIGOROUS":
+                                    veryActiveMinutes += minutes;
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (JsonException)
+            {
+                return StatusCode(
+                    502,
+                    new
+                    {
+                        error = "Google Health returned invalid active-minutes JSON."
+                    });
+            }
+
+            return Ok(new
+            {
+                date = selectedDate.ToString("yyyy-MM-dd"),
+                lightly_active_minutes = lightlyActiveMinutes,
+                moderately_active_minutes = moderatelyActiveMinutes,
+                very_active_minutes = veryActiveMinutes
+            });
+        }
+
+        [HttpGet("test-daily-activity-summary")]
+        public async Task<IActionResult> TestDailyActivitySummary(
+            [FromQuery] string? date)
+        {
+            if (!DateOnly.TryParseExact(
+                    date,
+                    "yyyy-MM-dd",
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateOnly selectedDate))
+            {
+                return BadRequest("Use a valid date in YYYY-MM-DD format.");
+            }
+
+            var (_, token, error) = await GetValidAccessTokenAsync();
+
+            if (error != null)
+                return error;
+
+
+
+            string activeMinutesUrl =
+                "https://health.googleapis.com/v4/users/me/dataTypes/active-minutes/dataPoints:dailyRollUp";
+
+            var activeMinutesPayload = new
+            {
+                range = new
+                {
+                    start = new
+                    {
+                        date = new
+                        {
+                            year = selectedDate.Year,
+                            month = selectedDate.Month,
+                            day = selectedDate.Day
+                        }
+                    },
+                    end = new
+                    {
+                        date = new
+                        {
+                            year = selectedDate.AddDays(1).Year,
+                            month = selectedDate.AddDays(1).Month,
+                            day = selectedDate.AddDays(1).Day
+                        }
+                    }
+                },
+                windowSizeDays = 1,
+                pageSize = 1
+            };
+
+            string activeMinutesJson =
+                JsonSerializer.Serialize(activeMinutesPayload);
+
+            using var activeMinutesResponse =
+                await SendGoogleRequestAsync(
+                    HttpMethod.Post,
+                    activeMinutesUrl,
+                    token!,
+                    activeMinutesJson);
+
+            string activeMinutesBody =
+                await activeMinutesResponse.Content.ReadAsStringAsync();
+
+            if (!activeMinutesResponse.IsSuccessStatusCode)
+            {
+                return StatusCode(
+                    (int)activeMinutesResponse.StatusCode,
+                    new
+                    {
+                        error =
+                            "Google Health active-minutes request failed.",
+                        details = activeMinutesBody
+                    });
+            }
+
+            long lightlyActiveMinutes = 0;
+            long moderatelyActiveMinutes = 0;
+            long veryActiveMinutes = 0;
+
+            try
+            {
+                using var document =
+                    JsonDocument.Parse(activeMinutesBody);
+
+                if (document.RootElement.TryGetProperty(
+                        "rollupDataPoints",
+                        out JsonElement rollupPoints) &&
+                    rollupPoints.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (JsonElement point
+                        in rollupPoints.EnumerateArray())
+                    {
+                        if (!point.TryGetProperty(
+                                "activeMinutes",
+                                out JsonElement activeMinutes))
+                            continue;
+
+                        if (!activeMinutes.TryGetProperty(
+                                "activeMinutesRollupByActivityLevel",
+                                out JsonElement activityLevels) ||
+                            activityLevels.ValueKind != JsonValueKind.Array)
+                            continue;
+
+                        foreach (JsonElement activityLevel
+                            in activityLevels.EnumerateArray())
+                        {
+                            if (!activityLevel.TryGetProperty(
+                                    "activityLevel",
+                                    out JsonElement levelElement))
+                                continue;
+
+                            if (!activityLevel.TryGetProperty(
+                                    "activeMinutesSum",
+                                    out JsonElement minutesElement))
+                                continue;
+
+                            string? level = levelElement.GetString();
+
+                            if (!long.TryParse(
+                                    minutesElement.ToString(),
+                                    out long minutes) ||
+                                minutes < 0)
+                                continue;
+
+                            switch (level)
+                            {
+                                case "LIGHT":
+                                    lightlyActiveMinutes += minutes;
+                                    break;
+
+                                case "MODERATE":
+                                    moderatelyActiveMinutes += minutes;
+                                    break;
+
+                                case "VIGOROUS":
+                                    veryActiveMinutes += minutes;
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (JsonException)
+            {
+                return StatusCode(
+                    502,
+                    new
+                    {
+                        error =
+                            "Google Health returned invalid active-minutes JSON."
+                    });
+            }
+
+
+            DateOnly nextDate =
+                selectedDate.AddDays(1);
+
+            string sleepFilter =
+                $"sleep.interval.civil_end_time >= \"{selectedDate:yyyy-MM-dd}\" " +
+                $"AND sleep.interval.civil_end_time < \"{nextDate:yyyy-MM-dd}\"";
+
+            string sleepUrl =
+                "https://health.googleapis.com/v4/users/me/" +
+                "dataTypes/sleep/dataPoints:reconcile" +
+                $"?filter={Uri.EscapeDataString(sleepFilter)}&pageSize=25";
+
+            using var sleepResponse =
+                await SendGoogleRequestAsync(
+                    HttpMethod.Get,
+                    sleepUrl,
+                    token!);
+
+            string sleepBody =
+                await sleepResponse.Content.ReadAsStringAsync();
+
+            if (!sleepResponse.IsSuccessStatusCode)
+            {
+                return StatusCode(
+                    (int)sleepResponse.StatusCode,
+                    new
+                    {
+                        error =
+                            "Google Health sleep request failed.",
+                        details = sleepBody
+                    });
+            }
+
+            long sleepMinutes = 0;
+
+            try
+            {
+                using var document =
+                    JsonDocument.Parse(sleepBody);
+
+                if (document.RootElement.TryGetProperty(
+                        "dataPoints",
+                        out JsonElement dataPoints) &&
+                    dataPoints.ValueKind == JsonValueKind.Array)
+                {
+                    foreach (JsonElement dataPoint
+                        in dataPoints.EnumerateArray())
+                    {
+                        if (!dataPoint.TryGetProperty(
+                                "sleep",
+                                out JsonElement sleep))
+                            continue;
+
+                        if (!sleep.TryGetProperty(
+                                "summary",
+                                out JsonElement summary))
+                            continue;
+
+                        if (!summary.TryGetProperty(
+                                "minutesAsleep",
+                                out JsonElement minutesAsleep))
+                            continue;
+
+                        if (long.TryParse(
+                                minutesAsleep.ToString(),
+                                out long minutes) &&
+                            minutes >= 0)
+                        {
+                            sleepMinutes += minutes;
+                        }
+                    }
+                }
+            }
+            catch (JsonException)
+            {
+                return StatusCode(
+                    502,
+                    new
+                    {
+                        error =
+                            "Google Health returned invalid sleep JSON."
+                    });
+            }
+
+
+            long sedentaryMinutes =
+                Math.Max(
+                    0,
+                    1440
+                    - sleepMinutes
+                    - lightlyActiveMinutes
+                    - moderatelyActiveMinutes
+                    - veryActiveMinutes);
+
+            return Ok(new
+            {
+                date = selectedDate.ToString("yyyy-MM-dd"),
+
+                sleep_minutes = sleepMinutes,
+
+                lightly_active_minutes =
+                    lightlyActiveMinutes,
+
+                moderately_active_minutes =
+                    moderatelyActiveMinutes,
+
+                very_active_minutes =
+                    veryActiveMinutes,
+
+                sedentary_minutes =
+                    sedentaryMinutes
+            });
+        }
+
+        [HttpGet("test-heart-rate-rollup")]
+        public async Task<IActionResult> TestHeartRateRollup([FromQuery] string? date)
+        {
+            if (!DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out DateOnly selectedDate))
+                return BadRequest("Use a valid date in YYYY-MM-DD format.");
+
+            var (_, token, error) = await GetValidAccessTokenAsync();
+            if (error != null) return error;
+
+            string json = JsonSerializer.Serialize(
+                BuildDailyRollupPayload(selectedDate, selectedDate.AddDays(1), 1));
+
+            using var response = await SendGoogleRequestAsync(
+                HttpMethod.Post,
+                "https://health.googleapis.com/v4/users/me/dataTypes/heart-rate/dataPoints:dailyRollUp",
+                token!, json);
+
+            string body = await response.Content.ReadAsStringAsync();
+            return StatusCode((int)response.StatusCode, body);   
+        }
+
+        [HttpGet("test-daily-heart-rate-zones-raw")]
+        public async Task<IActionResult> TestDailyHeartRateZonesRaw()
+        {
+            var (_, token, error) = await GetValidAccessTokenAsync();
+            if (error != null) return error;
+
+            using var response = await SendGoogleRequestAsync(
+                HttpMethod.Get,
+                "https://health.googleapis.com/v4/users/me/dataTypes/daily-heart-rate-zones/dataPoints?pageSize=3",
+                token!);
+
+            string body = await response.Content.ReadAsStringAsync();
+            return StatusCode((int)response.StatusCode, body);   
+        }
+
+        [HttpGet("test-model-input")]
+        public async Task<IActionResult> TestModelInput(
+            [FromQuery] string? date, [FromQuery] string? tz, [FromQuery] bool raw = false,
+            CancellationToken ct = default)
+        {
+            if (!DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out var predictionDate))
+                return BadRequest("Use a valid date in YYYY-MM-DD format.");
+
+            TimeZoneInfo zone;
+            try
+            {
+                zone = TimeZoneInfo.FindSystemTimeZoneById(
+                    string.IsNullOrWhiteSpace(tz) ? "America/Chicago" : tz);
+            }
+            catch (Exception ex) when (ex is TimeZoneNotFoundException or InvalidTimeZoneException)
+            {
+                return BadRequest("Unknown time zone. Use an IANA id such as America/Chicago.");
+            }
+
+            var (_, token, error) = await GetValidAccessTokenAsync();
+            if (error != null) return error;
+
+            try
+            {
+                var result = await _dataService.BuildModelRequestAsync(
+                    token!, predictionDate, zone, surveyScores: null, historyDays: 30, ct);
+
+                string requestJson = GoogleHealthDataService.SerializeModelRequest(result.Request);
+
+                if (raw)
+                    return Content(requestJson, "application/json");
+
+                string warningsJson = JsonSerializer.Serialize(result.Warnings);
+                return Content($"{{\"warnings\":{warningsJson},\"request\":{requestJson}}}", "application/json");
+            }
+            catch (GoogleHealthApiException ex)
+            {
+                return StatusCode(ex.StatusCode, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("test-daily-history")]
+        public async Task<IActionResult> TestDailyHistory([FromQuery] string? endDate, CancellationToken ct)
+        {
+            if (!DateOnly.TryParseExact(endDate, "yyyy-MM-dd", CultureInfo.InvariantCulture,
+                    DateTimeStyles.None, out var end))
+                return BadRequest("Use a valid endDate in YYYY-MM-DD format.");
+
+            var (_, token, error) = await GetValidAccessTokenAsync();
+            if (error != null) return error;
+
+            try
+            {
+                return Ok(await _dataService.GetDailyHistoryAsync(token!, end, 31, ct));
+            }
+            catch (GoogleHealthApiException ex)
+            {
+                return StatusCode(ex.StatusCode, new { error = ex.Message });
+            }
+        }
+
     }
 }
